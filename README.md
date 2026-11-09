@@ -2,21 +2,10 @@
 
 <p><strong>CS 253 / MA 253 — Data Structures and Algorithms Laboratory, Project </strong></p>
 
-<h2>Project Overview</h2>
+<h2>Project Overview Scenario</h2>
 
 <p>
-  We study how repeated insertions and deletions affect the average node depth
-  of a search tree. We compare an ordinary BST using always-successor Hibbard
-  deletion, an ordinary BST that randomly chooses a predecessor or successor
-  for two-child deletion, and a scapegoat tree with both array-based and
-  in-place Stout–Warren rebuilds.
-</p>
-
-<p>
-  The churn simulator keeps the number of keys fixed after each insert–delete
-  pair. We run at least n<sup>2</sup> pairs for each of n = 1,000, 2,000,
-  and 4,000. A sorted-array oracle checks the correctness of the tree
-  implementations.
+An index is subjected to days of random churn, with insertions and deletions in equal measure. The question is whether an ordinary binary search tree slowly degrades under this load, and what it costs to prevent that.
 </p>
 
 <h2>Team Roles</h2>
