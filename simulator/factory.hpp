@@ -9,7 +9,7 @@
 
 // #include "../src/structA/hibbard.hpp"
 // #include "../src/structB/scapegoat.hpp"
-// #include "../oracle/oracle.hpp"
+#include "../oracle/sorted_array.hpp"
 
 namespace churn {
 
@@ -20,7 +20,7 @@ inline std::unique_ptr<Dictionary> makeDictionary(const std::string& name, Rng& 
     // if (name == "hibbard_rand")      return std::make_unique<...>(rng);
     // if (name == "scapegoat_array")   return std::make_unique<...>();
     // if (name == "scapegoat_inplace") return std::make_unique<...>();
-    // if (name == "oracle")            return std::make_unique<...>();
+    if (name == "oracle") return std::make_unique<SortedArrayOracle>();
     return nullptr;
 }
 

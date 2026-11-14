@@ -1,7 +1,5 @@
 # Tools and build
 
-Items marked CONFIRM must be settled by the team before code is merged.
-
 ## Language and build
 
 C++17, built with CMake 3.16 or later. The shared build file is
@@ -11,18 +9,16 @@ CMakeLists.txt at the repository root. Shared headers are in include/.
     cmake ..
     cmake --build .
 
-## Compiler (CONFIRM)
+## Compiler
 
-Test builds use g++ or clang++ with sanitizers, through WSL or any Linux
-machine, because MSVC provides AddressSanitizer only and MinGW on Windows
-cannot run the sanitizers. Every member runs the tests through the same
-route.
+Sanitizer test builds are made by a member with WSL or Linux available, with
+g++ and -DCHURN_SANITIZE=ON. Everyone else builds with the Windows MinGW g++,
+which has no sanitizer runtime.
 
     cmake -DCHURN_SANITIZE=ON ..
 
-Full experiment builds use the default Release configuration without
-sanitizers, with one compiler and one set of flags for all runs, so that
-timings are comparable.
+Timed experiments use one agreed compiler and the Release flags in
+CMakeLists.txt, so that timings are comparable.
 
 ## Python
 
