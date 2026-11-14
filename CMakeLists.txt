@@ -9,9 +9,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Sanitizer test build: cmake -DCHURN_SANITIZE=ON ..
-# Supported with g++ or clang++ (Linux or WSL). On MSVC only AddressSanitizer
-# is available. See TOOLS.md.
+# Sanitizer build (g++ or clang++ on Linux or WSL): cmake -DCHURN_SANITIZE=ON
 option(CHURN_SANITIZE "Build with sanitizers" OFF)
 
 add_library(churn_common INTERFACE)
@@ -33,7 +31,5 @@ else()
   endif()
 endif()
 
-# Targets are added as components arrive. Each links churn_common, for example:
-#   add_executable(tests     tests/differential.cpp oracle/oracle.cpp ...)
-#   add_executable(simulator simulator/simulator.cpp ...)
-#   target_link_libraries(tests PRIVATE churn_common)
+add_executable(simulator simulator/simulator.cpp)
+target_link_libraries(simulator PRIVATE churn_common)
