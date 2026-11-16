@@ -33,3 +33,14 @@ endif()
 
 add_executable(simulator simulator/simulator.cpp)
 target_link_libraries(simulator PRIVATE churn_common)
+
+add_executable(differential oracle/differential.cpp)
+target_link_libraries(differential PRIVATE churn_common)
+
+add_executable(harness_test tests/harness_test.cpp)
+target_link_libraries(harness_test PRIVATE churn_common)
+target_include_directories(harness_test PRIVATE ${CMAKE_SOURCE_DIR}/oracle)
+
+enable_testing()
+add_test(NAME harness_test COMMAND harness_test)
+add_test(NAME differential_all COMMAND differential --tree all --operations 1000000 --seed 20260928)
