@@ -1,6 +1,6 @@
 #pragma once
-// One seeded generator per run, always passed explicitly by reference.
-// No component may construct its own generator or use global randomness.
+// Pass seeded generators explicitly by reference. The simulator keeps its
+// workload generator separate from the generator used by tree policies.
 
 #include <cstdint>
 #include <random>

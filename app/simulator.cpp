@@ -1,15 +1,16 @@
 // Usage: simulator --strategy NAME --n N --seed S [--pairs P] [--sample K]
 //                  [--schedule NAME] [--out FILE]
 
+#include <charconv>
 #include <chrono>
 #include <cstdint>
-#include <cstdio>
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <map>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "dictionary.hpp"
@@ -32,6 +33,17 @@ static std::map<std::string, std::string> parseArgs(int argc, char** argv) {
     return a;
 }
 
+static std::uint64_t parseUnsigned(const char* option, const std::string& value) {
+    std::uint64_t result = 0;
+    const char* end = value.data() + value.size();
+    const auto parsed = std::from_chars(value.data(), end, result);
+    if (parsed.ec != std::errc{} || parsed.ptr != end) {
+        std::cerr << "invalid value for --" << option << ": " << value << '\n';
+        std::exit(2);
+    }
+    return result;
+}
+
 int main(int argc, char** argv) {
     auto args = parseArgs(argc, argv);
     if (!args.count("strategy") || !args.count("n") || !args.count("seed")) {
@@ -41,22 +53,30 @@ int main(int argc, char** argv) {
         return 2;
     }
     const std::string strategy = args["strategy"];
-    const std::size_t n = std::stoull(args["n"]);
-    const std::uint64_t seed = std::stoull(args["seed"]);
+    const std::uint64_t requestedSize = parseUnsigned("n", args["n"]);
+    if (requestedSize < 2 || requestedSize > kKeyUniverse) {
+        std::cerr << "n must be between 2 and " << kKeyUniverse << '\n';
+        return 2;
+    }
+    const auto n = static_cast<std::size_t>(requestedSize);
+    const std::uint64_t seed = parseUnsigned("seed", args["seed"]);
     const std::uint64_t pairs =
-        args.count("pairs") ? std::stoull(args["pairs"])
+        args.count("pairs") ? parseUnsigned("pairs", args["pairs"])
                             : static_cast<std::uint64_t>(n) * n;
     const std::uint64_t sample =
-        args.count("sample") ? std::stoull(args["sample"]) : n;
+        args.count("sample") ? parseUnsigned("sample", args["sample"]) : n;
     const std::string schedName =
         args.count("schedule") ? args["schedule"] : "uniform";
-    if (n < 2 || sample == 0) {
-        std::cerr << "n must be at least 2 and sample at least 1\n";
+    if (sample == 0) {
+        std::cerr << "sample must be at least 1\n";
         return 2;
     }
 
-    Rng rng(seed);
-    auto dict = makeDictionary(strategy, rng);
+    Rng workloadRng(seed);
+    std::seed_seq deletionSeed{static_cast<std::uint32_t>(seed),
+                               static_cast<std::uint32_t>(seed >> 32), 1u};
+    Rng deletionRng(deletionSeed);
+    auto dict = makeDictionary(strategy, deletionRng);
     if (!dict) {
         std::cerr << "unknown strategy: " << strategy << "\n";
         return 2;
@@ -87,28 +107,45 @@ int main(int argc, char** argv) {
 
     std::vector<Key> live;
     live.reserve(n);
+    std::unordered_set<Key> liveKeys;
+    liveKeys.reserve(n);
     while (live.size() < n) {
-        Key k = randomKey(rng);
-        if (dict->insert(k)) live.push_back(k);
+        const Key key = randomKey(workloadRng);
+        if (liveKeys.insert(key).second) live.push_back(key);
+    }
+    for (const Key key : live) {
+        if (!dict->insert(key)) {
+            std::cerr << "error: insert failed for initial key " << key << '\n';
+            return 1;
+        }
     }
 
     const auto t0 = std::chrono::steady_clock::now();
     writeRow(0);
-    for (std::uint64_t p = 1; p <= pairs; ++p) {
-        std::size_t idx = sched->pickDeleteIndex(live, rng);
-        Key victim = live[idx];
-        live[idx] = live.back();
+    for (std::uint64_t i = 0; i < pairs; ++i) {
+        const std::uint64_t pairIndex = i + 1;
+        const std::size_t index = sched->pickDeleteIndex(live, workloadRng);
+        const Key victim = live[index];
+        live[index] = live.back();
         live.pop_back();
+        liveKeys.erase(victim);
+
+        Key key;
+        do {
+            key = sched->pickInsertKey(workloadRng);
+        } while (!liveKeys.insert(key).second);
+        live.push_back(key);
+
         if (!dict->erase(victim)) {
-            std::cerr << "error: erase failed for stored key at pair " << p
-                      << "\n";
+            std::cerr << "error: erase failed for stored key at pair " << pairIndex << '\n';
             return 1;
         }
-        Key k = sched->pickInsertKey(rng);
-        while (!dict->insert(k)) k = sched->pickInsertKey(rng);
-        live.push_back(k);
+        if (!dict->insert(key)) {
+            std::cerr << "error: insert failed for fresh key at pair " << pairIndex << '\n';
+            return 1;
+        }
 
-        if (p % sample == 0) writeRow(p);
+        if (pairIndex % sample == 0) writeRow(pairIndex);
     }
     if (pairs % sample != 0) writeRow(pairs);
 

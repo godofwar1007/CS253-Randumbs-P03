@@ -43,11 +43,14 @@ the root at 0.
 
 ## Randomness
 
-One `churn::Rng` (std::mt19937_64) is created per run from an explicit seed
-and passed by reference to every component that needs randomness. No
-component creates its own generator. The seed is recorded in every CSV row.
-The random Hibbard policy draws its predecessor or successor choice from this
-shared generator.
+The simulator seeds its workload generator from the explicit run seed. It
+generates the initial keys and each delete/insert pair independently of the
+dictionary, tracking live keys to reject duplicates. With the same simulator
+build, seed, size, schedule, and pair count, every strategy replays the same
+operations. The random Hibbard policy draws its predecessor or successor
+choice from a separate `churn::Rng` deterministically derived from the run
+seed. Generators are passed explicitly by reference. The run seed is recorded
+in every CSV row.
 
 ## One churn pair
 
