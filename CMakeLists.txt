@@ -41,9 +41,13 @@ target_link_libraries(churn_hibbard PUBLIC churn_common)
 
 add_executable(simulator app/simulator.cpp)
 target_link_libraries(simulator PRIVATE churn_hibbard churn_scapegoat)
+target_link_libraries(churn_hibbard PUBLIC churn_common)
+
+add_executable(simulator simulator/simulator.cpp)
+target_link_libraries(simulator PRIVATE churn_scapegoat)
 
 add_executable(differential oracle/differential.cpp)
-target_link_libraries(differential PRIVATE churn_common)
+target_link_libraries(differential PRIVATE churn_hibbard churn_scapegoat)
 
 add_executable(harness_test tests/harness_test.cpp)
 target_link_libraries(harness_test PRIVATE churn_common)
@@ -52,7 +56,13 @@ target_include_directories(harness_test PRIVATE ${CMAKE_SOURCE_DIR}/oracle)
 add_executable(scapegoat_tests tests/scapegoat_tests.cpp)
 target_link_libraries(scapegoat_tests PRIVATE churn_scapegoat)
 
+add_executable(oracle_checks tests/oracle_checks.cpp)
+target_link_libraries(oracle_checks PRIVATE churn_hibbard churn_scapegoat)
+target_include_directories(oracle_checks PRIVATE ${CMAKE_SOURCE_DIR}/oracle)
+
 enable_testing()
 add_test(NAME harness_test COMMAND harness_test)
 add_test(NAME differential_all COMMAND differential --tree all --operations 1000000 --seed 20260928)
 add_test(NAME scapegoat_tests COMMAND scapegoat_tests)
+add_test(NAME oracle_checks COMMAND oracle_checks)
+add_test(NAME differential_replay COMMAND differential --replay ${CMAKE_SOURCE_DIR}/tests/oracle_cases/deletions.txt)
