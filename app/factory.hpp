@@ -7,17 +7,20 @@
 #include "schedule.hpp"
 #include "standin_bst.hpp"
 
-// #include "../src/structA/hibbard.hpp"
+#include "hibbard.hpp"
 #include "scapegoat.hpp"
 #include "../oracle/sorted_array.hpp"
 
 namespace churn {
 
 inline std::unique_ptr<Dictionary> makeDictionary(const std::string& name, Rng& rng) {
-    (void)rng;
     if (name == "standin_bst") return std::make_unique<StandinBst>();
-    // if (name == "hibbard_succ")      return std::make_unique<...>();
-    // if (name == "hibbard_rand")      return std::make_unique<...>(rng);
+    if (name == "hibbard_succ") {
+        return std::make_unique<HibbardBst>(HibbardPolicy::Successor, rng);
+    }
+    if (name == "hibbard_rand") {
+        return std::make_unique<HibbardBst>(HibbardPolicy::Random, rng);
+    }
     if (name == "scapegoat_array") {
         return std::make_unique<ScapegoatTree>(ScapegoatTree::RebuildMode::Array);
     }

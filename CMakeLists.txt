@@ -35,8 +35,12 @@ add_library(churn_scapegoat STATIC src/structB/scapegoat.cpp)
 target_include_directories(churn_scapegoat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/structB)
 target_link_libraries(churn_scapegoat PUBLIC churn_common)
 
-add_executable(simulator simulator/simulator.cpp)
-target_link_libraries(simulator PRIVATE churn_scapegoat)
+add_library(churn_hibbard STATIC src/structA/hibbard.cpp)
+target_include_directories(churn_hibbard PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/structA)
+target_link_libraries(churn_hibbard PUBLIC churn_common)
+
+add_executable(simulator app/simulator.cpp)
+target_link_libraries(simulator PRIVATE churn_hibbard churn_scapegoat)
 
 add_executable(differential oracle/differential.cpp)
 target_link_libraries(differential PRIVATE churn_common)
