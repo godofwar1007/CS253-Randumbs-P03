@@ -1,0 +1,9 @@
+test,tree,seed,operations,result
+harness_test,test_set,20260928,1000000,PASS
+differential_all,hibbard_succ,20260928,1000000,PASS
+differential_all,hibbard_rand,20260928,1000000,PASS
+differential_all,scapegoat_array,20260928,1000000,PASS
+differential_all,scapegoat_inplace,20260928,1000000,PASS
+scapegoat_tests,all applicable variants,,,PASS
+oracle_checks,all applicable variants,,,PASS
+differential_replay,all applicable variants,,,PASS

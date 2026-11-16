@@ -68,8 +68,10 @@ ctest --test-dir build --output-on-failure
 ```
 
 The differential runner uses 1,000,000 operations and seed 20260928 by default.
-The real trees still need to be connected in `oracle/trees.hpp`, so the full
-test currently reports the missing implementations. The separate `harness_test`
-checks the harness against a test-only reference and deliberately broken code.
+All four real tree variants are connected in `oracle/trees.hpp`. The full test
+compares each with the sorted-array oracle and checks invariants after every
+operation. The separate `harness_test` checks the harness against a test-only
+reference and deliberately broken code; `oracle_checks` tests deletion cases,
+rebuilds and checker detection of corrupted metadata.
 See [oracle/README.md](oracle/README.md) for commands, expected output, tree
 integration and failure replay.

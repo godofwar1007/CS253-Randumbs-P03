@@ -27,24 +27,19 @@ For multi-configuration generators, use `--config Release` for the build and
 Or create `build/` and compile the two programs directly:
 
 ```sh
-g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -I include oracle/differential.cpp -o build/differential
+g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -I include oracle/differential.cpp src/structA/hibbard.cpp src/structB/scapegoat.cpp -o build/differential
 g++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -I include -I oracle tests/harness_test.cpp -o build/harness_test
 ```
 
 On Windows use `.exe` for the output filenames.
 
-## Connect the trees
+## Connected trees
 
-`oracle/trees.hpp` contains `makeTestTree(name, rng)`. Include the real tree
-headers there and return a new tree for each name: `hibbard_succ`,
-`hibbard_rand`, `scapegoat_array` and `scapegoat_inplace`. Pass the supplied RNG
-to any tree needing randomness. Add their `.cpp` files to the `differential`
-CMake target if required. The operations are generated before any tree runs,
-so a tree's random choices cannot change the input sequence.
-
-The real implementations are not present in this checkout. Until connected,
-the runner and `differential_all` CTest fail with `tree is not connected`.
-No missing tree is silently skipped or replaced by the oracle.
+`oracle/trees.hpp` connects `hibbard_succ` and `hibbard_rand` to `HibbardBst`,
+and `scapegoat_array` and `scapegoat_inplace` to `ScapegoatTree`. CMake links
+both implementations. The randomized Hibbard policy receives the supplied RNG.
+Operations are generated before any tree runs, so a tree's random choices
+cannot change the input sequence. Unknown names are reported as errors.
 
 ```sh
 ./build/harness_test
@@ -58,6 +53,30 @@ It prints `HARNESS TEST PASSED`. This does not certify the real trees.
 A passing differential run prints `PASS` for each selected tree, then
 `ALL SELECTED TREES PASSED`. Exit codes are 0 for success, 1 for a detected
 failure, and 2 for an input/configuration/file error.
+
+`oracle_checks` exercises root, leaf, one-child and two-child deletion,
+duplicates, missing keys, integer boundaries, sorted insertion and deletion
+shrinkage. Test-only access deliberately corrupts subtree sizes, node counts,
+depth sums, ordering and scapegoat high-water metadata to verify `validate()`
+rejects them. `differential_replay` checks the saved deletion fixture against
+all four trees. The separate `scapegoat_tests` target checks the rebuilders.
+
+For a memory-error check, run these commands inside WSL Ubuntu or Linux with
+a full C++17 compiler (verified toolchain: GCC 13.3.0, CMake 3.28.3):
+
+```sh
+cmake -S . -B build-oracle-sanitize -DCHURN_SANITIZE=ON
+cmake --build build-oracle-sanitize -j 4
+ctest --test-dir build-oracle-sanitize --output-on-failure
+```
+
+MinGW GCC 6.3.0 does not support all C++17 features used by the complete
+project. Use the WSL commands above for the full suite.
+
+The verified sanitizer run passed all five CTests, including one million
+operations per real tree with seed 20260928. The original output is saved in
+`results/raw/oracle_sanitizer_tests.log`, with a summary in
+`results/raw/oracle_validation.csv`. These record correctness, not performance.
 
 ## Failures and replay
 

@@ -78,7 +78,7 @@ int main() {
               "initial failure did not shrink to empty");
         std::cout << "HARNESS TEST PASSED: 1000000 operations, seed=" << seed
                   << "; fault detection and shrinking passed\n"
-                     "Real project trees still need to be connected and tested.\n";
+                     "Real project trees are checked separately by differential.\n";
         return 0;
     } catch (const std::exception& e) {
         std::cerr << "HARNESS TEST FAILED: " << e.what() << '\n';
