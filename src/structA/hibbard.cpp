@@ -66,8 +66,9 @@ bool HibbardBst::erase(Key k) {
         const std::uint64_t childSize = child ? child->subtreeSize : 0;
         totalDepth_ -= depth + childSize;
         *link = child;
-        delete x;
+        path.pop_back();  // x is removed, so only its surviving ancestors remain.
         for (Node* y : path) --y->subtreeSize;
+        delete x;
     } else {
         const bool usePredecessor =
             policy_ == HibbardPolicy::Random && uniformInt(rng_, 0, 1) == 0;
