@@ -36,6 +36,11 @@ target_include_directories(churn_scapegoat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/sr
 target_link_libraries(churn_scapegoat PUBLIC churn_common)
 
 add_library(churn_hibbard STATIC src/structA/hibbard.cpp)
+target_include_directories(churn_hibbard PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/structA)
+target_link_libraries(churn_hibbard PUBLIC churn_common)
+
+add_executable(simulator app/simulator.cpp)
+target_link_libraries(simulator PRIVATE churn_hibbard churn_scapegoat)
 target_link_libraries(churn_hibbard PUBLIC churn_common)
 
 add_executable(simulator simulator/simulator.cpp)
