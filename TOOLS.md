@@ -1,5 +1,18 @@
 # Tools and build
 
+## AI assistance
+
+| Tool and date | Used by | Used for | Files affected | Changes and verification |
+|---|---|---|---|---|
+| OpenAI Codex, 2026-11-14 | Tanush Bansal | Sorted-array oracle | oracle/sorted_array.hpp | Generated against the shared interface; edge cases and 100,000 seeded operations checked against a test-only std::set |
+| OpenAI Codex, 2026-11-17 | Tanush Bansal | Differential runner, seeded workloads, replay, shrinking, tests and documentation | oracle/harness.hpp, oracle/differential.cpp, oracle/trees.hpp, tests/harness_test.cpp, oracle/README.md, CMakeLists.txt, README.md, TOOLS.md | Used plain structs and functions without code comments; compiled and checked one million operations against a test-only reference, reproducibility, injected faults and shrinking; real-tree testing still awaits integration |
+
+### Representative prompts
+
+- 2026-11-14: "implement the sorted array oracle"
+- 2026-11-17: "explain how we'll build the differential harness"
+- 2026-11-17: "write the code and write it human like, not too high-fi stuff, also dont write comments in the code"
+
 ## Language and build
 
 C++17, built with CMake 3.16 or later. The shared build file is

@@ -58,3 +58,18 @@ An index is subjected to days of random churn, with insertions and deletions in 
     </tr>
   </tbody>
 </table>
+
+## Oracle tests
+
+```sh
+cmake -S . -B build
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+The differential runner uses 1,000,000 operations and seed 20260928 by default.
+The real trees still need to be connected in `oracle/trees.hpp`, so the full
+test currently reports the missing implementations. The separate `harness_test`
+checks the harness against a test-only reference and deliberately broken code.
+See [oracle/README.md](oracle/README.md) for commands, expected output, tree
+integration and failure replay.
