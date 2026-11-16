@@ -31,5 +31,16 @@ else()
   endif()
 endif()
 
+add_library(churn_scapegoat STATIC src/structB/scapegoat.cpp)
+target_include_directories(churn_scapegoat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src/structB)
+target_link_libraries(churn_scapegoat PUBLIC churn_common)
+
 add_executable(simulator simulator/simulator.cpp)
-target_link_libraries(simulator PRIVATE churn_common)
+target_link_libraries(simulator PRIVATE churn_scapegoat)
+
+include(CTest)
+if(BUILD_TESTING)
+  add_executable(scapegoat_tests tests/scapegoat_tests.cpp)
+  target_link_libraries(scapegoat_tests PRIVATE churn_scapegoat)
+  add_test(NAME scapegoat_tests COMMAND scapegoat_tests)
+endif()

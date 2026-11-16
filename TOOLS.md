@@ -30,3 +30,17 @@ produce plots. No Python is used inside the experiment loop.
 - Seeds are explicit; no component creates its own random generator.
 - Results files are named strategy_n_seed.csv and written to results/.
 - Do not commit build directories. A .gitignore is provided.
+
+## Structure B (D2) tooling
+
+- OpenAI Codex reviewed the assignment, the shared dictionary interface, and
+  the Galperin–Rivest and Stout–Warren papers. It assisted with the scapegoat
+  implementation, both rebuild routines, the focused tests, and simulator
+  and CMake integration.
+- During verification, the shrink-test fixture was changed to insert
+  medians in level order so setup does not trigger a rebuild. MinGW g++
+  was used to run the focused tests in release and debug builds and to
+  check both modes on seeded churn at all three assignment sizes.
+- CMake and Ninja built the integrated simulator and test target. CTest
+  ran the focused suite, and Python compared the simulator CSV samples
+  from both modes on the same 100,000-pair workload.
