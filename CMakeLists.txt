@@ -41,10 +41,6 @@ target_link_libraries(churn_hibbard PUBLIC churn_common)
 
 add_executable(simulator app/simulator.cpp)
 target_link_libraries(simulator PRIVATE churn_hibbard churn_scapegoat)
-target_link_libraries(churn_hibbard PUBLIC churn_common)
-
-add_executable(simulator simulator/simulator.cpp)
-target_link_libraries(simulator PRIVATE churn_scapegoat)
 
 add_executable(differential oracle/differential.cpp)
 target_link_libraries(differential PRIVATE churn_hibbard churn_scapegoat)
