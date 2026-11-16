@@ -37,6 +37,8 @@ public:
     std::string name() const override;
 
 private:
+    friend struct HibbardBstTestAccess;
+
     struct Node {
         explicit Node(Key value) : key(value) {}
 

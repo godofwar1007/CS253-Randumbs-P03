@@ -66,6 +66,7 @@ bool HibbardBst::erase(Key k) {
         const std::uint64_t childSize = child ? child->subtreeSize : 0;
         totalDepth_ -= depth + childSize;
         *link = child;
+        path.pop_back();
         delete x;
         for (Node* y : path) --y->subtreeSize;
     } else {

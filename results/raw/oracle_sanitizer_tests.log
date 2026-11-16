@@ -1,0 +1,100 @@
+Start testing: Nov 16 22:52 UTC
+----------------------------------------------------------
+1/5 Testing: harness_test
+1/5 Test: harness_test
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/harness_test"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"harness_test" start time: Nov 16 22:52 UTC
+Output:
+----------------------------------------------------------
+HARNESS TEST PASSED: 1000000 operations, seed=20260928; fault detection and shrinking passed
+Real project trees still need to be connected and tested.
+<end of output>
+Test time =  10.25 sec
+----------------------------------------------------------
+Test Passed.
+"harness_test" end time: Nov 16 22:52 UTC
+"harness_test" time elapsed: 00:00:10
+----------------------------------------------------------
+
+2/5 Testing: differential_all
+2/5 Test: differential_all
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/differential" "--tree" "all" "--operations" "1000000" "--seed" "20260928"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"differential_all" start time: Nov 16 22:52 UTC
+Output:
+----------------------------------------------------------
+Testing hibbard_succ, seed=20260928, operations=1000000
+PASS hibbard_succ
+Testing hibbard_rand, seed=20260928, operations=1000000
+PASS hibbard_rand
+Testing scapegoat_array, seed=20260928, operations=1000000
+PASS scapegoat_array
+Testing scapegoat_inplace, seed=20260928, operations=1000000
+PASS scapegoat_inplace
+ALL SELECTED TREES PASSED
+<end of output>
+Test time = 125.34 sec
+----------------------------------------------------------
+Test Passed.
+"differential_all" end time: Nov 16 22:54 UTC
+"differential_all" time elapsed: 00:02:05
+----------------------------------------------------------
+
+3/5 Testing: scapegoat_tests
+3/5 Test: scapegoat_tests
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/scapegoat_tests"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"scapegoat_tests" start time: Nov 16 22:54 UTC
+Output:
+----------------------------------------------------------
+Scapegoat tests passed
+<end of output>
+Test time =   1.69 sec
+----------------------------------------------------------
+Test Passed.
+"scapegoat_tests" end time: Nov 16 22:54 UTC
+"scapegoat_tests" time elapsed: 00:00:01
+----------------------------------------------------------
+
+4/5 Testing: oracle_checks
+4/5 Test: oracle_checks
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/oracle_checks"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"oracle_checks" start time: Nov 16 22:54 UTC
+Output:
+----------------------------------------------------------
+ORACLE CHECKS PASSED: deletion cases, rebuilds and corrupted metadata
+<end of output>
+Test time =   0.31 sec
+----------------------------------------------------------
+Test Passed.
+"oracle_checks" end time: Nov 16 22:54 UTC
+"oracle_checks" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/5 Testing: differential_replay
+5/5 Test: differential_replay
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/differential" "--replay" "/mnt/c/Users/Tanush Bansal/trial/DSA-project/tests/oracle_cases/deletions.txt"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"differential_replay" start time: Nov 16 22:54 UTC
+Output:
+----------------------------------------------------------
+Testing hibbard_succ, seed=42, operations=23
+PASS hibbard_succ
+Testing hibbard_rand, seed=42, operations=23
+PASS hibbard_rand
+Testing scapegoat_array, seed=42, operations=23
+PASS scapegoat_array
+Testing scapegoat_inplace, seed=42, operations=23
+PASS scapegoat_inplace
+ALL SELECTED TREES PASSED
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"differential_replay" end time: Nov 16 22:54 UTC
+"differential_replay" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 16 22:54 UTC
