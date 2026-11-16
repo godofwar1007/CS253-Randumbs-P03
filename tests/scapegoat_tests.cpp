@@ -27,6 +27,10 @@ struct ScapegoatTreeTestAccess {
         return ScapegoatTree::depthLimit(size);
     }
 
+    static void setHighWaterMarkToLiveSize(ScapegoatTree& tree) {
+        tree.maxSize_ = tree.size();
+    }
+
 private:
     static std::optional<std::size_t> perfectSize(const ScapegoatTree::Node* node) {
         if (!node) return 0;
@@ -121,6 +125,19 @@ void testInsertionRebuild(Mode mode) {
     require(ScapegoatTreeTestAccess::shape(tree).front() == 1 &&
                 ScapegoatTreeTestAccess::isPerfect(tree, true),
             "insertion rebuild must preserve the root and perfectly balance its right child");
+}
+
+void testValidationHeight(Mode mode) {
+    ScapegoatTree tree(mode);
+    for (Key key : {10, 20, 30, 40, 5, 50}) {
+        require(tree.insert(key), "height fixture insertion failed");
+    }
+    require(tree.erase(5) && tree.size() == 5 && tree.totalDepth() == 10 &&
+                tree.rebuildCount() == 0 && tree.validate(),
+            "the five-node chain is valid with a high-water mark of six");
+
+    ScapegoatTreeTestAccess::setHighWaterMarkToLiveSize(tree);
+    require(!tree.validate(), "the same chain exceeds the height bound at a high-water mark of five");
 }
 
 void insertBalanced(churn::Dictionary& tree, Key first, Key last) {
@@ -226,6 +243,7 @@ int main() {
         for (auto mode : {Mode::Array, Mode::InPlace}) {
             testUpdateAccounting(mode);
             testInsertionRebuild(mode);
+            testValidationHeight(mode);
         }
         testPerfectRebuildSizes();
         testMixedUpdates();
