@@ -162,7 +162,7 @@ bool ScapegoatTree::validate() const {
     }
     std::size_t count = 0;
     std::uint64_t depth = 0;
-    return validateSubtree(root_, nullptr, nullptr, 0, depthLimit(size()) + 1,
+    return validateSubtree(root_, nullptr, nullptr, 0, depthLimit(maxSize_),
                            count, depth) && count == size() && depth == totalDepth_;
 }
 
