@@ -57,6 +57,11 @@ use C++17. Bash orchestrates compilation, tests and experiments.
 - CMake and Ninja built the integrated simulator and test target. CTest
   ran the focused suite, and Python compared the simulator CSV samples
   from both modes on the same 100,000-pair workload.
+- OpenAI Codex drafted the D2 LaTeX proof and checked it against the
+  implementation and Galperin and Rivest's lemmas. The draft distinguishes
+  the live-size insertion trigger from the high-water validator bound and
+  includes a five-node example. Tectonic compiles the source, and PyMuPDF
+  renders the pages for inspection.
 
 ## D6 tooling
 

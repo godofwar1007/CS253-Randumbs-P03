@@ -1,0 +1,142 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[top=22mm,bottom=23mm,left=27mm,right=27mm]{geometry}
+\usepackage{amsmath,amsthm}
+\usepackage[hidelinks]{hyperref}
+
+\hypersetup{
+  pdftitle={D2: Existence of a Scapegoat After a Deep Insertion},
+  pdfauthor={Parth Pawar}
+}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{7pt}
+\linespread{1.08}
+\setlength{\emergencystretch}{1em}
+\newcommand{\limitheight}[1]{\left\lfloor\log_{1/\alpha}(#1)\right\rfloor}
+
+\begin{document}
+
+{\centering
+  {\large\bfseries D2\par}
+  \vspace{5pt}
+  {\LARGE\bfseries Existence of a Scapegoat\\[2pt] After a Deep Insertion\par}
+  \vspace{9pt}
+  {\large Parth Pawar\par}
+  \vspace{2pt}
+  Structure B Owner \textbar{} CS 253 / MA 253\\
+  Search Trees Under Long-Running Churn
+  \par\vspace{8pt}
+  \rule{35mm}{0.35pt}
+\par}
+\vspace{6pt}
+
+\section{Setup}
+
+Fix \(\tfrac12<\alpha<1\). Let \(s(v)\) be the number of nodes in the
+subtree rooted at \(v\), including \(v\), and let an empty child have
+size zero. A node \(v\) is \(\alpha\)-weight-balanced if each child \(c\)
+satisfies \(s(c)\leq\alpha s(v)\). Depth counts edges from the root,
+which has depth zero. Let \(n\) be the number of nodes immediately after
+a successful insertion and before any rebuild.
+
+\textbf{Claim.} If the inserted node has depth \(d>\log_{1/\alpha} n\),
+then some ancestor on its path is not \(\alpha\)-weight-balanced.
+
+\section{Proof}
+
+Write the insertion path as \(v_0,v_1,\ldots,v_d\), where \(v_0\)
+is the root and \(v_d\) is the new leaf. Thus \(s(v_0)=n\) and
+\(s(v_d)=1\). Suppose every edge on this path satisfies
+\(s(v_{i+1})\leq\alpha s(v_i)\). Applying the inequality along the path
+gives
+\[
+  1=s(v_d)\leq\alpha s(v_{d-1})
+    \leq\cdots\leq\alpha^d s(v_0)=\alpha^d n.
+\]
+Rearranging gives \((1/\alpha)^d\leq n\). Since \(1/\alpha>1\), taking
+the logarithm to base \(1/\alpha\) gives \(d\leq\log_{1/\alpha}n\),
+contradicting the insertion depth. Therefore at least one edge satisfies
+\[
+  s(v_{i+1})>\alpha s(v_i).
+\]
+The child \(v_{i+1}\) violates the weight bound at its parent \(v_i\).
+Hence \(v_i\) is an unbalanced ancestor and can be selected as the scapegoat.
+\qed
+
+\section{Applying the test}
+
+Depth is an integer, so the trigger is equivalent to
+\(d>\limitheight{n}\). Starting at the new leaf, the implementation
+walks upward and chooses the first parent whose child on the path
+violates the weight bound. For our choice \(\alpha=2/3\), the test is
+\(3s(\mathrm{child})>2s(\mathrm{parent})\). Equality is allowed.
+
+\textbf{Example.} Insert \(1,2,3,4,5\) in order. The new leaf has depth
+\(4>\log_{3/2}5\). On the way up, the child of size \(2\) under the
+parent of size \(3\) meets the bound. The next edge violates it because
+\(3(3)>2(4)\). The scapegoat is key \(2\), whose subtree has four nodes.
+
+\newpage
+
+\section{Height bound used by the validator}
+
+Let \(M\) be the largest size since the last whole-tree rebuild, and let
+\(h\) be the largest node depth. For a nonempty tree, the validator checks
+\[
+  h\leq\limitheight{M}.
+\]
+The insertion trigger uses the live size \(n\). The validator uses \(M\)
+to account for deletions.
+
+\subsection*{Height after a perfect rebuild}
+
+A perfectly balanced subtree of size \(k\geq1\) has the minimum
+possible height \(\lfloor\log_2 k\rfloor\). The lower bound follows from
+the maximum number of nodes that fit in a given height. For the upper
+bound, each child has at most \(\lfloor k/2\rfloor\) nodes, so induction
+gives the stated height.
+
+\subsection*{Insertion}
+Before any rebuild, the high-water mark can only increase. If the
+insertion creates a node deeper than \(\limitheight{M}\), it is the
+unique deepest node, and its depth exceeds the bound by exactly one.
+Since \(n\leq M\), the insertion triggers the search for a scapegoat.
+
+Let \(r\) be the height of that scapegoat's subtree just before the
+rebuild and \(k\) its size. There is only one node at local depth \(r\),
+so \(k\leq 2^r\). If \(k=2^r\), every shallower level is full, and the
+two child subtrees at the scapegoat differ in size by one. Each child
+then has at most \(k/2\) nodes, contradicting the weight violation.
+
+Therefore \(k<2^r\), and a perfect rebuild reduces the height of this
+subtree by at least one. All nodes outside it already met the bound.
+If an insertion triggers a rebuild without exceeding the high-water
+height bound, the minimum-height rebuild preserves the bound.
+
+\subsection*{Deletion and whole-tree rebuilds}
+Deletion does not increase height. When the size falls below
+\(\alpha M\), the implementation rebuilds the whole nonempty tree
+and resets \(M=n\). A whole-tree rebuild caused by insertion also resets
+\(M=n\). In either case the resulting height is
+\(\lfloor\log_2 n\rfloor\leq\limitheight{n}\).
+The one-node tree starts at height zero, so these cases establish the
+bound for every nonempty state.
+
+After each update, \(n\geq\alpha M\)
+when the tree is nonempty, so
+\[
+  h\leq\limitheight{M}\leq\limitheight{n}+1.
+\]
+The argument applies to both rebuild methods because both produce a
+perfectly balanced subtree.
+
+\section*{Reference}
+
+I. Galperin and R. L. Rivest.
+\href{https://people.csail.mit.edu/rivest/pubs/GR93.pdf}{\emph{Scapegoat Trees}}.
+Proceedings of the Fourth Annual ACM--SIAM Symposium on Discrete
+Algorithms, 1993, pp.~165--174. See Lemma~5.1 for the existence argument
+and Lemma~5.6 for the height reduction after rebuilding.
+
+\end{document}
