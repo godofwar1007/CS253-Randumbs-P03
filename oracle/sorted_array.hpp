@@ -4,57 +4,63 @@
 
 #include <algorithm>
 #include <vector>
+using namespace std;
 
 namespace churn {
 
 // Simple reference implementation: lookup O(log n), updates O(n).
 class SortedArrayOracle final : public Dictionary {
 private:
-    std::vector<Key> keys_;
+    vector<Key> keys;
 
 public:
-    bool insert(Key key) override {
-        auto pos = std::lower_bound(keys_.begin(), keys_.end(), key);
-        if (pos != keys_.end() && *pos == key) {
+    bool insert(Key key) override 
+    {
+        auto pos = lower_bound(keys.begin(), keys.end(), key);
+        if (pos != keys.end() && *pos == key) 
+        {
             return false;
         }
-        keys_.insert(pos, key);
+        keys.insert(pos, key);
         return true;
     }
 
-    bool erase(Key key) override {
-        auto pos = std::lower_bound(keys_.begin(), keys_.end(), key);
-        if (pos == keys_.end() || *pos != key) {
+    bool erase(Key key) override 
+    {
+        auto pos = lower_bound(keys.begin(), keys.end(), key);
+        if (pos == keys.end() || *pos != key) 
+        {
             return false;
         }
-        keys_.erase(pos);
+        keys.erase(pos);
         return true;
     }
 
-    bool contains(Key key) const override {
-        return std::binary_search(keys_.begin(), keys_.end(), key);
+    bool contains(Key key) const override 
+    {
+        return binary_search(keys.begin(), keys.end(), key);
     }
 
-    std::size_t size() const override { return keys_.size(); }
+    size_t size() const override { return keys.size(); }
 
-    std::uint64_t totalDepth() const override { return 0; }
+    unsigned long long totalDepth() const override { return 0; }
 
-    std::uint64_t rebuildCount() const override { return 0; }
+    unsigned long long rebuildCount() const override { return 0; }
 
-    void inorder(std::vector<Key>& out) const override {
-        out.insert(out.end(), keys_.begin(), keys_.end());
+    void inorder(vector<Key>& out) const override {
+        out.insert(out.end(), keys.begin(), keys.end());
     }
 
     bool validate() const override {
-        for (std::size_t i = 1; i < keys_.size(); ++i) {
-            if (keys_[i - 1] >= keys_[i]) {
+        for (size_t i = 1; i<keys.size(); ++i) {
+            if (keys[i-1] >= keys[i]) {
                 return false;
             }
         }
         return true;
     }
 
-    std::string name() const override { return "oracle"; }
+    string name() const override { return "oracle"; }
 };
 
 } // namespace churn
