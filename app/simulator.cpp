@@ -164,3 +164,14 @@ int main(int argc, char** argv) {
     }
     return 0;
 }
+
+// ./simulator --strategy NAME --n N --seed S [--pairs P] [--sample K]
+//            [--schedule NAME] [--out FILE]
+
+// Strategies:
+//   hibbard_succ     - Hibbard BST with always-successor deletion
+//   hibbard_rand     - Hibbard BST with random predecessor or successor deletion
+//   scapegoat_array  - Scapegoat tree with array-based rebuilding
+//   scapegoat_inplace - Scapegoat tree with in-place Stout–Warren rebuilding
+//   oracle          - Sorted-array reference implementation
+//   standin_bst     - Stand-in BST for testing
