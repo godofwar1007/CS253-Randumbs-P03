@@ -1,0 +1,9 @@
+CPU: 13th Gen Intel(R) Core(TM) i7-13650HX
+L2 cache: 11776 KiB reported by Win32_Processor
+L3 cache: 24576 KiB reported by Win32_Processor
+OS: Microsoft Windows 11 Home Single Language 10.0.26300, x64
+Compiler: Zig 0.17.1 bundled clang version 22.1.8
+Compiler flags: -std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic
+Base commit: e332f29; plus local integration changes in app/factory.hpp and bench/d6_run.cpp delivered alongside these data
+Timing: serialized runs; elapsed time covers key generation, dictionary operations and sampled output after initial build
+Execution date: 2026-11-17

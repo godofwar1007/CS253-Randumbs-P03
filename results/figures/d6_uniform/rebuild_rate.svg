@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="930" height="515" viewBox="0 0 930 515" role="img"><title>Predicted and measured rebuild rates</title><rect width="930" height="515" fill="white"/><g font-family="sans-serif" font-size="12" fill="#202b37">
+<text x="80" y="28" text-anchor="start" font-size="20">Predicted and measured rebuild rates</text>
+<line x1="80" y1="380" x2="710" y2="380" stroke="#dbe1e7"/>
+<text x="70" y="384" text-anchor="end" font-size="12">0</text>
+<line x1="80" y1="315" x2="710" y2="315" stroke="#dbe1e7"/>
+<text x="70" y="319" text-anchor="end" font-size="12">0.0251</text>
+<line x1="80" y1="250" x2="710" y2="250" stroke="#dbe1e7"/>
+<text x="70" y="254" text-anchor="end" font-size="12">0.0502</text>
+<line x1="80" y1="185" x2="710" y2="185" stroke="#dbe1e7"/>
+<text x="70" y="189" text-anchor="end" font-size="12">0.0753</text>
+<line x1="80" y1="120" x2="710" y2="120" stroke="#dbe1e7"/>
+<text x="70" y="124" text-anchor="end" font-size="12">0.1</text>
+<line x1="80" y1="55" x2="710" y2="55" stroke="#dbe1e7"/>
+<text x="70" y="59" text-anchor="end" font-size="12">0.125</text>
+<text x="113.75" y="403" text-anchor="middle" font-size="12">1e+03</text>
+<text x="301.25" y="403" text-anchor="middle" font-size="12">2e+03</text>
+<text x="676.25" y="403" text-anchor="middle" font-size="12">4e+03</text>
+<line x1="80" y1="380" x2="710" y2="380" stroke="#526170"/>
+<line x1="80" y1="55" x2="80" y2="380" stroke="#526170"/>
+<text x="395" y="429" text-anchor="middle" font-size="12">Tree size (keys)</text>
+<g transform="translate(19 218) rotate(-90)"><text x="0" y="0" text-anchor="middle" font-size="12">Rebuilds per churn pair</text>
+</g>
+<polygon fill="#a1a9b2" opacity="0.15" points="113.75,160.346 301.25,79.0741 676.25,124.652 676.25,354.465 301.25,349.907 113.75,358.035 "/>
+<polyline fill="none" stroke="#a1a9b2" stroke-width="2" stroke-dasharray="6 4" points="113.75,259.191 301.25,214.491 676.25,239.558 "/>
+<line x1="731" y1="68" x2="753" y2="68" stroke="#a1a9b2" stroke-dasharray="6 4"/>
+<text x="760" y="72" text-anchor="start" font-size="12">Predicted range (shaded)</text>
+<polyline fill="none" stroke="#394655" stroke-width="2" stroke-dasharray="6 4" points="113.75,160.346 301.25,79.0741 676.25,124.652 "/>
+<line x1="731" y1="90" x2="753" y2="90" stroke="#394655" stroke-dasharray="6 4"/>
+<text x="760" y="94" text-anchor="start" font-size="12">Random BST model</text>
+<polyline fill="none" stroke="#156692" stroke-width="2" points="113.75,354.085 301.25,356.98 676.25,360.001 "/>
+<line x1="113.75" y1="352.195" x2="113.75" y2="355.975" stroke="#156692"/>
+<line x1="109.75" y1="352.195" x2="117.75" y2="352.195" stroke="#156692"/>
+<line x1="109.75" y1="355.975" x2="117.75" y2="355.975" stroke="#156692"/>
+<circle cx="113.75" cy="354.085" r="3" fill="#156692"/>
+<line x1="301.25" y1="352.092" x2="301.25" y2="361.868" stroke="#156692"/>
+<line x1="297.25" y1="352.092" x2="305.25" y2="352.092" stroke="#156692"/>
+<line x1="297.25" y1="361.868" x2="305.25" y2="361.868" stroke="#156692"/>
+<circle cx="301.25" cy="356.98" r="3" fill="#156692"/>
+<line x1="676.25" y1="357.983" x2="676.25" y2="362.02" stroke="#156692"/>
+<line x1="672.25" y1="357.983" x2="680.25" y2="357.983" stroke="#156692"/>
+<line x1="672.25" y1="362.02" x2="680.25" y2="362.02" stroke="#156692"/>
+<circle cx="676.25" cy="360.001" r="3" fill="#156692"/>
+<line x1="731" y1="112" x2="753" y2="112" stroke="#156692"/>
+<text x="760" y="116" text-anchor="start" font-size="12">scapegoat_array</text>
+<polyline fill="none" stroke="#167458" stroke-width="2" stroke-dasharray="6 4" points="113.75,354.085 301.25,356.98 676.25,360.001 "/>
+<line x1="113.75" y1="352.195" x2="113.75" y2="355.975" stroke="#167458"/>
+<line x1="109.75" y1="352.195" x2="117.75" y2="352.195" stroke="#167458"/>
+<line x1="109.75" y1="355.975" x2="117.75" y2="355.975" stroke="#167458"/>
+<circle cx="113.75" cy="354.085" r="3" fill="#167458"/>
+<line x1="301.25" y1="352.092" x2="301.25" y2="361.868" stroke="#167458"/>
+<line x1="297.25" y1="352.092" x2="305.25" y2="352.092" stroke="#167458"/>
+<line x1="297.25" y1="361.868" x2="305.25" y2="361.868" stroke="#167458"/>
+<circle cx="301.25" cy="356.98" r="3" fill="#167458"/>
+<line x1="676.25" y1="357.983" x2="676.25" y2="362.02" stroke="#167458"/>
+<line x1="672.25" y1="357.983" x2="680.25" y2="357.983" stroke="#167458"/>
+<line x1="672.25" y1="362.02" x2="680.25" y2="362.02" stroke="#167458"/>
+<circle cx="676.25" cy="360.001" r="3" fill="#167458"/>
+<line x1="731" y1="134" x2="753" y2="134" stroke="#167458" stroke-dasharray="6 4"/>
+<text x="760" y="138" text-anchor="start" font-size="12">scapegoat_inplace</text>
+<text x="80" y="458" text-anchor="start" font-size="12">Compare observed rates with the predicted band. Error bars show one sample SD.</text>
+<text x="80" y="477" text-anchor="start" font-size="10">Data: results/raw/d6_uniform/runs.csv and listed sample CSVs</text>
+<text x="80" y="494" text-anchor="start" font-size="10">Model: results/raw/d6_prediction.csv | Generator: results/d6_figures.cpp</text>
+</g></svg>

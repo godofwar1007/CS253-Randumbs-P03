@@ -1,6 +1,5 @@
 #include "../app/factory.hpp"
 #include "adversarial_workload.hpp"
-#include "schedules.hpp"
 
 #include <algorithm>
 #include <charconv>
@@ -25,9 +24,6 @@ std::uint64_t number(std::string_view value) {
 }
 
 std::unique_ptr<Schedule> scheduleFor(const std::string& name) {
-    if (name == "min_delete_high_insert") return std::make_unique<MinDeleteHighInsertSchedule>();
-    if (name == "max_delete_low_insert") return std::make_unique<MaxDeleteLowInsertSchedule>();
-    if (name == "scapegoat_stress") return std::make_unique<ScapegoatStressSchedule>();
     if (name == "adversarial") return std::make_unique<AdversarialWorkload>();
     return makeSchedule(name);
 }

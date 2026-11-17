@@ -42,6 +42,19 @@ target_link_libraries(churn_hibbard PUBLIC churn_common)
 add_executable(simulator app/simulator.cpp)
 target_link_libraries(simulator PRIVATE churn_hibbard churn_scapegoat)
 
+add_executable(d6_pred docs/analysis/pred.cpp)
+add_executable(d6_run bench/d6_run.cpp)
+add_executable(d6_figures results/d6_figures.cpp)
+foreach(target IN ITEMS d6_pred d6_run d6_figures)
+  target_link_libraries(${target} PRIVATE churn_common)
+endforeach()
+
+add_executable(schedule_test adversary/schedule_test.cpp)
+target_link_libraries(schedule_test PRIVATE churn_common)
+
+add_executable(run_workload adversary/run_workload.cpp)
+target_link_libraries(run_workload PRIVATE churn_hibbard churn_scapegoat)
+
 add_executable(differential oracle/differential.cpp)
 target_link_libraries(differential PRIVATE churn_hibbard churn_scapegoat)
 
@@ -61,6 +74,7 @@ target_link_libraries(adversarial_test PRIVATE churn_common)
 target_include_directories(adversarial_test PRIVATE ${CMAKE_SOURCE_DIR}/oracle)
 
 enable_testing()
+add_test(NAME adversarial_schedules COMMAND schedule_test)
 add_test(NAME harness_test COMMAND harness_test)
 add_test(NAME differential_all COMMAND differential --tree all --operations 1000000 --seed 20260928)
 add_test(NAME scapegoat_tests COMMAND scapegoat_tests)

@@ -120,22 +120,32 @@ int main(int argc, char** argv) try {
             "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") != std::string::npos) {
         throw std::runtime_error("Invalid schedule name");
     }
+    const bool hibbardStress = schedule == "min_delete_high_insert" ||
+                               schedule == "max_delete_low_insert";
+    const bool scapegoatStress = schedule == "scapegoat_stress";
+    if (schedule != "uniform" && !hibbardStress && !scapegoatStress) {
+        throw std::runtime_error("Unknown benchmark schedule: " + schedule);
+    }
     if (!fs::is_regular_file(simulator)) throw std::runtime_error("Simulator executable not found");
     if (!fs::create_directories(output)) throw std::runtime_error("Output directory already exists");
     std::ofstream summary(output / "runs.csv");
     summary.exceptions(std::ios::badbit | std::ios::failbit);
     summary << "strategy,n,seed,schedule,pairs,seconds,samples\n";
     for (int n : {1000, 2000, 4000}) {
-        const int pairs = smoke ? 2 * n : n * n;
+        // Four turnovers capture formation and persistence of the expensive chains.
+        const int pairs = smoke ? 2 * n : (hibbardStress ? 4 * n : n * n);
+        const int sample = hibbardStress ? n / 10 : n;
         for (int seed : {20261117, 20261118, 20261119, 20261120, 20261121}) {
             for (const std::string strategy : {"hibbard_succ", "hibbard_rand",
                                                "scapegoat_array", "scapegoat_inplace"}) {
+                const bool hibbard = strategy == "hibbard_succ" || strategy == "hibbard_rand";
+                if ((hibbardStress && !hibbard) || (scapegoatStress && hibbard)) continue;
                 const auto stem = strategy + "_" + std::to_string(n) + "_" + std::to_string(seed);
                 const auto samples = stem + ".csv";
                 const auto log = output / "simulator.log";
                 if (!launch({simulator, "--strategy", strategy, "--n", std::to_string(n),
                              "--seed", std::to_string(seed), "--schedule", schedule,
-                             "--pairs", std::to_string(pairs), "--sample", std::to_string(n),
+                             "--pairs", std::to_string(pairs), "--sample", std::to_string(sample),
                              "--out", output / samples}, log)) {
                     std::cerr << std::ifstream(log).rdbuf();
                     throw std::runtime_error("Simulator failed for " + stem);

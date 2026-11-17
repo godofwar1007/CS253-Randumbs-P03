@@ -10,6 +10,7 @@
 #include "hibbard.hpp"
 #include "scapegoat.hpp"
 #include "../oracle/sorted_array.hpp"
+#include "../adversary/schedules.hpp"
 
 namespace churn {
 
@@ -33,6 +34,9 @@ inline std::unique_ptr<Dictionary> makeDictionary(const std::string& name, Rng& 
 
 inline std::unique_ptr<Schedule> makeSchedule(const std::string& name) {
     if (name == "uniform") return std::make_unique<UniformSchedule>();
+    if (name == "min_delete_high_insert") return std::make_unique<MinDeleteHighInsertSchedule>();
+    if (name == "max_delete_low_insert") return std::make_unique<MaxDeleteLowInsertSchedule>();
+    if (name == "scapegoat_stress") return std::make_unique<ScapegoatStressSchedule>();
     return nullptr;
 }
 

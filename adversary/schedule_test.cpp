@@ -1,5 +1,7 @@
 
-#include <bits/stdc++.h>
+#include <cstddef>
+#include <iostream>
+#include <vector>
 #include "schedules.hpp"
 #include "adversarial_workload.hpp"
 

@@ -1,30 +1,24 @@
-﻿# Churn experiments
+# Churn experiments
 
-Run from the repository root. The workflow needs Bash, CMake, Ninja, a
-C++17 g++-compatible compiler, Python 3, and matplotlib. On Windows, use
-Git Bash with the matching native CMake, Ninja, compiler, and Python on PATH.
+Run from the repo root with Bash, CMake 3.16 or later, and a C++17 compiler.
+On Windows, use Git Bash with native CMake and a C++17 toolchain.
 
-- `bash scripts/run_all.sh --smoke` builds, runs CTest and the schedule
-  checks, runs the simulator, then exercises every benchmark case with
-  64 keys and two seeds. Smoke figures and CSVs go under
-  `build-run-all/smoke-results/`.
-- `bash scripts/run_all.sh --full` uses 1,000, 2,000, and 4,000 keys,
-  n² pairs per run, and five recorded seeds. It writes one CSV per
-  experiment under `results/raw/` and figures under `results/figures/`.
-- `python3 bench/churn_experiments.py --figures-only` recreates the
-  figures from the full raw CSV files.
+| Command | Output |
+|---|---|
+| `bash scripts/run_all.sh --smoke` | Build, CTest, and short runs for every workload under `build-run-all/smoke-results/` |
+| `bash scripts/run_all.sh --full` | Build, CTest, measured runs in `results/raw/`, and figures in `results/figures/` |
+| `bash scripts/run_all.sh --figures-only` | Regenerate the figures from the checked-in CSVs |
 
-The standalone runner uses the existing dictionary implementations.
-It assigns separate seeded RNG streams to churn and deletion policy,
-so corresponding runs start with the same keys and see the same requests.
-It samples average depth in edges and cumulative rebuilds, and verifies
-the final contents and invariants. Elapsed seconds include workload
-generation and sampled CSV output.
+The full workflow uses five matched seeds and n = 1000, 2000, 4000.
+Uniform runs and `scapegoat_stress` run for n² pairs. Each Hibbard adversarial
+direction runs for 4n pairs to capture chain formation and persistence.
+Its control is the first 4n pairs of the same-size uniform run. Both
+scapegoat modes are measured under stress and both Hibbard policies
+under each directed workload. The same simulator records all runs.
 
-The extremal-delete schedules rotate through a key interval above or
-below the initial live keys. Over time, oppositely directed deletion and
-insertion leave a chain. Once that happens, both deletion policies can
-degrade because deleting an extreme never chooses a two-child replacement.
-The monotone insertion schedule tests whether repeatedly attaching new
-extreme keys stresses scapegoat subtree rebuilding. Use the net rebuild
-count since pair zero when comparing it to uniform churn.
+Each output directory contains a manifest and one sample CSV per
+(strategy, size, seed). A new run requires a fresh raw directory. Move
+the old raw directories before using `--full` and record the new host,
+compiler, flags and source revision in `results/raw/d6_environment.txt`.
+The C++ figure generator creates SVGs and summary CSVs. See [D6 tool
+usage](D6.md) for the individual commands.

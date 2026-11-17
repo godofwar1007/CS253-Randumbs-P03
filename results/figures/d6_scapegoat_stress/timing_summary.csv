@@ -1,0 +1,7 @@
+n,strategy,runs,mean_seconds,sd_seconds
+1000,scapegoat_array,5,0.7762478,0.0216684076065
+1000,scapegoat_inplace,5,0.6685238,0.0178090179881
+2000,scapegoat_array,5,3.272226,0.0395653463273
+2000,scapegoat_inplace,5,2.79496,0.0806314395878
+4000,scapegoat_array,5,13.6657,0.119683269507
+4000,scapegoat_inplace,5,11.87566,0.171748254722
