@@ -11,6 +11,60 @@ insert, erase and contains operations over 257 possible keys. This bounded
 working set makes full checks after every operation practical. It is separate
 from full-scale churn benchmarks; replay files can contain larger workloads.
 
+## Adversarial workload
+
+Use the teammate's `AdversarialWorkload` from
+`adversary/adversarial_workload.hpp` with:
+
+```sh
+./build/differential --tree all --workload adversarial --size 128 --operations 1000000 --seed 20260928
+```
+
+`oracle/adversarial.hpp` first records `size` distinct random insertions. It
+then calls the supplied schedule to choose a live key to erase and a fresh key
+to insert. The complete operation vector is generated once using the oracle,
+before constructing any tested tree. Every strategy receives the same vector,
+even if a randomized tree consumes extra RNG values.
+
+`--operations` includes the initial insertions. It must equal `size` plus a
+positive even number so that every churn pair is complete. Size is `n` between
+pairs and `n - 1` between each deletion and insertion. The default size is 128;
+`--size` is accepted only with `--workload adversarial`. The default workload
+remains `mixed` and existing commands keep their behaviour.
+
+Use `--save` to write any passing or failing input for later replay:
+
+```sh
+./build/differential --workload adversarial --size 16 --operations 1024 --seed 42 --save build/adversarial.txt
+./build/differential --replay build/adversarial.txt
+```
+
+Replay and failure files include `workload adversarial` and `size` headers as
+source metadata, along with the tree and seed. The stored operations are
+executed directly; they are not regenerated or required to stay paired after
+shrinking. Older replay files with only seed and tree headers still work.
+Generated large inputs should remain in ignored build folders rather than
+being committed; record their command and seed instead.
+
+CTest runs a million adversarial operations per real tree, generator checks,
+and a saved-file export/replay check, in addition to the existing tests.
+`tests/adversarial_test.cpp` verifies seed reproducibility, distinct initial
+keys, minimum-key deletion, decreasing fresh insertions, fixed size and invalid
+argument rejection.
+
+The sanitizer run passed all nine CTests, including 1,000,000 operations for
+each real tree under this schedule (128 initial keys and 499,936 churn pairs,
+seed 20260928). Saved-file checks use seed 42, 16 initial keys and 1,024
+operations. Results are in `results/raw/oracle_adversarial_tests.log` and
+`results/raw/oracle_adversarial_validation.csv`. These are correctness results,
+not timing benchmarks or proof of a worst-case claim.
+
+This tests correctness under the supplied schedule. It does not establish
+that the schedule maximizes rebuild frequency or isolates successor-deletion
+bias. Minimum-key deletion never takes the two-child replacement path. The
+default 128-key check also does not replace full-scale churn experiments at
+n = 1000, 2000 and 4000 with at least n squared pairs.
+
 ## Build
 
 With CMake 3.16+ and a C++17 compiler:
@@ -91,7 +145,7 @@ Existing files with that basename are overwritten.
 ```
 
 Replay files contain their own tree and seed, so do not combine `--replay`
-with `--tree`, `--seed` or `--operations`. The format is:
+with `--tree`, `--seed`, `--operations`, `--workload` or `--size`. The basic format is:
 
 ```text
 seed 42
