@@ -3,7 +3,7 @@ param([switch]$Preflight)
 $ErrorActionPreference = 'Stop'
 $env:Path = 'C:\mingw64\bin;' + $env:Path
 $simulator = Join-Path $PSScriptRoot 'simulator.exe'
-$strategies = 'hibbard_succ', 'hibbard_rand', 'scapegoat_inplace'
+$strategies = 'hibbard_succ', 'hibbard_rand', 'scapegoat_array', 'scapegoat_inplace'
 $seed = 20261117
 $n = 4000
 $pairs = 16000000
