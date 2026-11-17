@@ -33,10 +33,10 @@ which has no sanitizer runtime.
 Timed experiments use one agreed compiler and the Release flags in
 CMakeLists.txt, so that timings are comparable.
 
-## Python
+## Benchmarks and figures
 
-Python 3 with matplotlib and pandas, used only to read results/*.csv and
-produce plots. No Python is used inside the experiment loop.
+The build, benchmark runner, model calculator, and SVG figure generator
+use C++17. Bash orchestrates compilation, tests and experiments.
 
 ## Repository rules
 
@@ -57,3 +57,13 @@ produce plots. No Python is used inside the experiment loop.
 - CMake and Ninja built the integrated simulator and test target. CTest
   ran the focused suite, and Python compared the simulator CSV samples
   from both modes on the same 100,000-pair workload.
+
+## D6 tooling
+
+- Parth Kalia used OpenAI Codex on 2026-11-17 to assist with the prediction
+  calculator, C++ benchmark and figure tools, integration of the existing
+  D5 schedules, the revised derivation PDF, the report, and the D6 slide.
+- Verification compared the full raw records, model table and figure
+  inputs, and exercised the CMake/CTest workflow. Zig with Clang ran the
+  measured Release experiments. The presentation authoring runtime was
+  used for the slide and its preview.

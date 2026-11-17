@@ -85,3 +85,14 @@ The teammate's adversarial schedule can also be checked against all four trees:
 The operation count includes initial insertions followed by complete
 delete/insert pairs. Use `--save build/adversarial.txt` to export the identical
 input used for every tree, then `--replay build/adversarial.txt` to rerun it.
+
+## Benchmarks and figures
+
+```sh
+bash scripts/run_all.sh --smoke
+bash scripts/run_all.sh --figures-only
+```
+
+Use `--full` to collect new full-scale results. The C++17 workflow uses the
+same simulator for uniform and adversarial runs. See [benchmark instructions](bench/README.md)
+for pair budgets and executable usage, and [the report](REPORT.md) for the measurements.

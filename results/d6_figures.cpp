@@ -185,11 +185,13 @@ public:
         legendY += 22;
     }
 
-    void finish(const std::string& caption, const fs::path& raw, const fs::path& model = {}) {
+    void finish(const std::string& caption, const fs::path& raw,
+                const fs::path& comparison = {}, bool baseline = false) {
         text(80, 458, caption, "start");
         text(80, 477, "Data: " + (raw / "runs.csv").generic_u8string() + " and listed sample CSVs", "start", 10);
-        const auto modelSource = model.empty() ? "" : "Model: " + model.generic_u8string() + " | ";
-        text(80, 494, modelSource + "Generator: results/d6_figures.cpp", "start", 10);
+        const auto source = comparison.empty() ? "" : (baseline ? "Baseline: " : "Model: ")
+                            + comparison.generic_u8string() + " | ";
+        text(80, 494, source + "Generator: results/d6_figures.cpp", "start", 10);
         svg << "</g></svg>\n";
         svg.close();
     }
@@ -320,8 +322,79 @@ void compare(const Groups& groups, const fs::path& raw, const fs::path& model, c
     comparison.close();
 }
 
+void plotAdversary(const Groups& groups, const Groups& baseline, const fs::path& raw,
+                   const fs::path& uniform, const fs::path& out, const std::string& schedule,
+                   std::ostream& timing) {
+    const bool useRebuilds = schedule == "scapegoat_stress";
+    const std::size_t start = useRebuilds ? 2 : 0;
+    for (const auto& [n, byStrategy] : groups) {
+        struct Series {
+            std::vector<double> xs;
+            std::vector<Statistics> points;
+        };
+        std::array<Series, 4> series;
+        const Count last = byStrategy.at(strategies[start]).begin()->second.pairs.back();
+        double top = 1;
+        for (std::size_t i = 0; i < 2; ++i) {
+            const auto& name = strategies[start + i];
+            const auto& stressed = byStrategy.at(name);
+            const auto& control = baseline.at(n).at(name);
+            if (control.size() != stressed.size()) throw std::runtime_error("Seed counts differ");
+            std::vector<double> seconds;
+            for (const auto& [seed, run] : stressed) {
+                if (control.count(seed) == 0) throw std::runtime_error("Baseline seed missing");
+                seconds.push_back(run.seconds);
+            }
+            const auto elapsed = stats(seconds);
+            timing << n << ',' << name << ',' << stressed.size() << ','
+                   << elapsed.mean << ',' << elapsed.sd << '\n';
+            for (std::size_t k = 0; k < 2; ++k) {
+                const auto& runs = k == 0 ? control : stressed;
+                auto& line = series[2 * i + k];
+                const auto& pairs = runs.begin()->second.pairs;
+                if (!std::binary_search(pairs.begin(), pairs.end(), last)) {
+                    throw std::runtime_error("Missing matched-budget sample");
+                }
+                for (const auto& entry : runs) {
+                    if (entry.second.pairs != pairs) throw std::runtime_error("Inconsistent sample times");
+                }
+                for (std::size_t j = 0; j < pairs.size() && pairs[j] <= last; ++j) {
+                    std::vector<double> values;
+                    for (const auto& entry : runs) {
+                        const auto& run = entry.second;
+                        values.push_back(useRebuilds
+                            ? static_cast<double>(run.rebuilds[j] - run.rebuilds.front())
+                            : run.depths[j]);
+                    }
+                    const auto value = stats(values);
+                    line.xs.push_back(static_cast<double>(pairs[j]));
+                    line.points.push_back(value);
+                    top = std::max(top, value.mean + value.sd);
+                }
+            }
+        }
+        std::vector<double> ticks;
+        for (int i = 0; i <= 5; ++i) ticks.push_back(static_cast<double>(last) * i / 5);
+        Chart chart(out / ("adversarial_" + std::to_string(n) + ".svg"), 0, static_cast<double>(last),
+                    top * 1.08, schedule + " versus uniform (n = " + std::to_string(n) + ")",
+                    "Churn pairs", useRebuilds ? "Rebuilds since initial build" : "Average node depth (edges)",
+                    ticks);
+        for (std::size_t i = 0; i < series.size(); ++i) {
+            const auto& line = series[i];
+            const bool isUniform = i % 2 == 0;
+            const std::array<std::string, 4> shortNames{"successor", "random delete", "array", "in-place"};
+            const auto name = shortNames[start + i / 2] + (isUniform ? " / uniform" : " / adversarial");
+            chart.series(line.xs, line.points, name, colors[start + i / 2], isUniform, true);
+        }
+        chart.finish("Compare workloads at the same pair budget. Shading shows one sample SD.",
+                     raw, uniform / "runs.csv", true);
+    }
+}
+
 int main(int argc, char** argv) try {
-    if (argc != 4) throw std::runtime_error("Usage: d6_figures RAW PREDICTIONS_CSV OUTPUT");
+    if (argc != 4 && argc != 5) {
+        throw std::runtime_error("Usage: d6_figures RAW PREDICTIONS_CSV OUTPUT [UNIFORM_RAW]");
+    }
     const auto raw = fs::u8path(argv[1]), model = fs::u8path(argv[2]), out = fs::u8path(argv[3]);
     std::string schedule;
     const auto groups = loadRuns(raw, schedule);
@@ -329,9 +402,18 @@ int main(int argc, char** argv) try {
     std::ofstream timing(out / "timing_summary.csv");
     timing.exceptions(std::ios::badbit | std::ios::failbit);
     timing << std::setprecision(12) << "n,strategy,runs,mean_seconds,sd_seconds\n";
-    plotDepth(groups, raw, out, schedule, timing);
+    if (schedule == "uniform") {
+        plotDepth(groups, raw, out, schedule, timing);
+        compare(groups, raw, model, out);
+    } else {
+        if (argc != 5) throw std::runtime_error("Adversarial figures require UNIFORM_RAW");
+        const auto uniform = fs::u8path(argv[4]);
+        std::string baselineSchedule;
+        const auto baseline = loadRuns(uniform, baselineSchedule);
+        if (baselineSchedule != "uniform") throw std::runtime_error("Expected uniform baseline");
+        plotAdversary(groups, baseline, raw, uniform, out, schedule, timing);
+    }
     timing.close();
-    if (schedule == "uniform") compare(groups, raw, model, out);
 } catch (const std::exception& error) {
     std::cerr << "d6_figures: " << error.what() << '\n';
     return EXIT_FAILURE;
