@@ -1,5 +1,5 @@
 #pragma once
-// Temporary test tree. Delete once the real structures exist.
+// Reference BST for simulator checks.
 
 #include <cstdint>
 #include <string>
@@ -122,4 +122,4 @@ public:
     std::string name() const override { return "standin_bst"; }
 };
 
-}  // namespace churn
+}

@@ -12,7 +12,7 @@ int main() {
         const auto limit = static_cast<std::size_t>(
             std::floor(std::log(static_cast<double>(n)) / std::log(1.0 / alpha)));
 
-        // Keep depths 0 through limit and one bucket for all deeper leaves.
+        // Bucket depths above the threshold together.
         std::vector<double> probability(limit + 2, 0.0);
         probability[0] = 1.0;
         for (std::size_t k = 1; k < n; ++k) {

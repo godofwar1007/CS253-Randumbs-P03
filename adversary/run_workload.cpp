@@ -83,7 +83,7 @@ void run(const std::string& strategy, const std::string& scheduleName,
     if (!std::cout) throw std::runtime_error("could not write CSV");
 }
 
-}  // namespace
+}
 
 int main(int argc, char** argv) {
     if (argc != 7) {

@@ -18,7 +18,7 @@
 namespace fs = std::filesystem;
 
 #ifdef _WIN32
-// Quote arguments using the Windows C runtime's argv escaping rules.
+// Escape arguments for Windows argv parsing.
 std::wstring quote(const std::wstring& arg) {
     std::wstring result = L"\"";
     std::size_t slashes = 0;
@@ -132,7 +132,7 @@ int main(int argc, char** argv) try {
     summary.exceptions(std::ios::badbit | std::ios::failbit);
     summary << "strategy,n,seed,schedule,pairs,seconds,samples\n";
     for (int n : {1000, 2000, 4000}) {
-        // Four turnovers capture formation and persistence of the expensive chains.
+        // Allow four turnovers for chains to form and persist.
         const int pairs = smoke ? 2 * n : (hibbardStress ? 4 * n : n * n);
         const int sample = hibbardStress ? n / 10 : n;
         for (int seed : {20261117, 20261118, 20261119, 20261120, 20261121}) {

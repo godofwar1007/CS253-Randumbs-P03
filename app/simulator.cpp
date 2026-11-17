@@ -1,6 +1,3 @@
-// Usage: simulator --strategy NAME --n N --seed S [--pairs P] [--sample K]
-//                  [--schedule NAME] [--out FILE]
-
 #include <charconv>
 #include <chrono>
 #include <cstdint>

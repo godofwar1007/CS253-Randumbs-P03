@@ -63,4 +63,4 @@ public:
     string name() const override { return "oracle"; }
 };
 
-} // namespace churn
+}

@@ -57,4 +57,4 @@ private:
     std::uint64_t rebuildCount_ = 0;
 };
 
-}  // namespace churn
+}

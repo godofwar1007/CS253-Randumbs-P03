@@ -15,11 +15,8 @@ public:
     HibbardBst& operator=(const HibbardBst&) = delete;
     ~HibbardBst() override;
 
-    // Inserts iteratively, rejects duplicates, and maintains size/depth data.
     bool insert(Key key) override;
 
-    // Erases iteratively. Successor policy always uses the successor. Random
-    // policy chooses predecessor or successor using the shared RNG.
     bool erase(Key key) override;
 
     bool contains(Key key) const override;
@@ -28,10 +25,8 @@ public:
     std::uint64_t totalDepth() const override;
     std::uint64_t rebuildCount() const override;
 
-    // Appends keys in ascending order using an explicit stack.
     void inorder(std::vector<Key>& out) const override;
 
-    // Checks BST ordering, subtree sizes, size_, and totalDepth_.
     bool validate() const override;
 
     std::string name() const override;
@@ -55,4 +50,4 @@ private:
     Rng& rng_;
 };
 
-}  // namespace churn
+}

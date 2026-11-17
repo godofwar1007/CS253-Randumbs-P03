@@ -54,7 +54,7 @@ private:
     }
 };
 
-}  // namespace churn
+}
 
 namespace {
 
@@ -232,7 +232,7 @@ void testMonotoneInsertions() {
     }
 }
 
-}  // namespace
+}
 
 int main() {
     try {

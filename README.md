@@ -1,90 +1,57 @@
-<h1>Search Trees Under Long-Running Churn</h1>
+# Project 3 — Search Trees Under Long-Running Churn
 
-<p><strong>CS 253 / MA 253 — Data Structures and Algorithms Laboratory, Project </strong></p>
+CS 253 / MA 253 Data Structures and Algorithms Laboratory
 
-<h2>Project Overview Scenario</h2>
+The simulator compares two Hibbard deletion policies and two scapegoat rebuild methods under the same fixed-size workloads. It measures average node depth and rebuild frequency at 1,000, 2,000, and 4,000 keys. In the recorded uniform runs, always-successor deletion produced the greatest final average depth at all three sizes.
 
-<p>
-An index is subjected to days of random churn, with insertions and deletions in equal measure. The question is whether an ordinary binary search tree slowly degrades under this load, and what it costs to prevent that.
-</p>
+## Team and roles
 
-<h2>Team Roles</h2>
+| Member | Roll number | Role | Module | Derivation |
+|---|---|---|---|---|
+| Mayank Khoria | 250001048 | Structure A | `src/structA/` | [D1](docs/derivations/D1_250001048.pdf) |
+| Parth Pawar | 2500041030 | Structure B | `src/structB/` | [D2](docs/derivations/D2.pdf) |
+| Eklavya | 250001028 | Architect | `app/`, `include/` | [D3](docs/derivations/D3_250001028.pdf) |
+| Tanush Bansal | 250001071 | Oracle | `oracle/`, `tests/` | [D4](docs/derivations/D4_250001071.pdf) |
+| Chetan Yogbharti | 250001023 | Adversary | `adversary/` | [D5](docs/derivations/D5_250001023.pdf) |
+| Parth Kalia | 250001054 | Analyst | `bench/`, `results/` | [D6](docs/derivations/D6_250001054.pdf) |
 
-<table>
-  <thead>
-    <tr>
-      <th>Member</th>
-      <th>Role</th>
-      <th>Responsibility</th>
-      <th>Derivation</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Mayank Khoria</td>
-      <td>Structure A</td>
-      <td>Implement the iterative BST and both Hibbard deletion policies.</td>
-      <td>D1</td>
-    </tr>
-    <tr>
-      <td>Parth Pawar</td>
-      <td>Structure B</td>
-      <td>Implement the scapegoat tree and both rebuild methods.</td>
-      <td>D2</td>
-    </tr>
-    <tr>
-      <td>Eklavya</td>
-      <td>Architect</td>
-      <td>Define the common interface and build the churn simulator.</td>
-      <td>D3</td>
-    </tr>
-    <tr>
-      <td>Tanush Bansal</td>
-      <td>Oracle</td>
-      <td>Build the sorted-array oracle, invariant checkers, and seeded differential test with failure shrinking.</td>
-      <td>D4</td>
-    </tr>
-    <tr>
-      <td>Chetan Yogbharti</td>
-      <td>Adversary</td>
-      <td>Generate workloads that degrade the always-successor BST and trigger frequent scapegoat rebuilds.</td>
-      <td>D5</td>
-    </tr>
-    <tr>
-      <td>Parth Kalia</td>
-      <td>Analyst</td>
-      <td>Model predicted costs, run benchmarks, and plot measured results.</td>
-      <td>D6</td>
-    </tr>
-  </tbody>
-</table>
+## Build
 
-## Oracle tests
+Use CMake 3.16 or newer and a C++17 compiler with integer `std::from_chars` support. The project was checked with Windows MinGW GCC 14.2. Bash is required for the benchmark script.
 
 ```sh
-cmake -S . -B build
-cmake --build build
-ctest --test-dir build --output-on-failure
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
 ```
 
-The differential runner uses 1,000,000 operations and seed 20260928 by default.
-All four real tree variants are connected in `oracle/trees.hpp`. The full test
-compares each with the sorted-array oracle and checks invariants after every
-operation. The separate `harness_test` checks the harness against a test-only
-reference and deliberately broken code; `oracle_checks` tests deletion cases,
-rebuilds and checker detection of corrupted metadata.
-See [oracle/README.md](oracle/README.md) for commands, expected output, tree
-integration and failure replay.
+The examples below use paths from a single-configuration build. With a multi-configuration build, executables may be under `build/Release/`. Windows executables use the `.exe` extension.
 
-The teammate's adversarial schedule can also be checked against all four trees:
+## Simulator quick start
 
 ```sh
-./build/differential --tree all --workload adversarial --size 128 --operations 1000000 --seed 20260928
+./build/simulator --strategy hibbard_succ --n 4 --seed 42 --pairs 4 --sample 2
 ```
 
-The operation count includes initial insertions followed by complete
-delete/insert pairs. Use `--save build/adversarial.txt` to export the identical
-input used for every tree, then `--replay build/adversarial.txt` to rerun it.
+Sample stdout from GCC 14.2 on Windows:
+
+```csv
+strategy,n,seed,pair_index,avg_depth,rebuild_count
+hibbard_succ,4,42,0,1.250000,0
+hibbard_succ,4,42,2,1.500000,0
+hibbard_succ,4,42,4,1.500000,0
+```
+
+Use `hibbard_succ`, `hibbard_rand`, `scapegoat_array`, or `scapegoat_inplace` for comparisons. The default schedule is `uniform`. Other schedules are `min_delete_high_insert`, `max_delete_low_insert`, and `scapegoat_stress`. The defaults are n² pairs and one sample every n pairs. Use `--out FILE` for CSV output to a file. Diagnostics and elapsed time go to stderr. For matching workloads, use the same build, seed, size, schedule, and pair count across strategies.
+
+## Tests and replay
+
+```sh
+ctest --test-dir build -C Release --output-on-failure
+./build/differential --tree all --operations 1000000 --seed 20260928
+./build/differential --replay tests/oracle_cases/deletions.txt
+```
+
+The replay format starts with `seed <integer>` and `tree <strategy-or-all>`. Each following line is `insert <key>`, `erase <key>`, or `contains <key>`. See the [oracle instructions](oracle/README.md) for saving, replaying, and shrinking a failing sequence.
 
 ## Benchmarks and figures
 
@@ -93,6 +60,18 @@ bash scripts/run_all.sh --smoke
 bash scripts/run_all.sh --figures-only
 ```
 
-Use `--full` to collect new full-scale results. The C++17 workflow uses the
-same simulator for uniform and adversarial runs. See [benchmark instructions](bench/README.md)
-for pair budgets and executable usage, and [the report](REPORT.md) for the measurements.
+Use `--full` for fresh measurements. The script requires unused benchmark output directories for a full run. See the [benchmark instructions](bench/README.md) for the existing raw data and pair budgets. At 4,000 keys after 16 million uniform pairs, the five-seed mean final depths were **23.93** edges for always-successor, **11.94** for randomized replacement, and **12.87** for both scapegoat modes. Hardware cache-counter measurements were unavailable. [Report](REPORT.md)
+
+## Repository map
+
+| Path | Contents |
+|---|---|
+| `app/`, `include/` | Simulator, schedule interface, dictionary contract, and RNG helpers |
+| `src/structA/`, `src/structB/` | Hibbard and scapegoat tree implementations |
+| `oracle/`, `tests/` | Sorted-array oracle, differential tests, and replay fixtures |
+| `adversary/` | Adversarial workloads and workload runner |
+| `bench/`, `scripts/` | Benchmark runner and experiment commands |
+| `results/` | Raw measurements, figures, and the figure generator |
+| `docs/` | Derivations, prediction model, and presentation materials |
+
+See [INTERFACE.md](INTERFACE.md) for invariants and [TOOLS.md](TOOLS.md) for tool use.

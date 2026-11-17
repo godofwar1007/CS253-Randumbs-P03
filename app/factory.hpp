@@ -40,4 +40,4 @@ inline std::unique_ptr<Schedule> makeSchedule(const std::string& name) {
     return nullptr;
 }
 
-}  // namespace churn
+}

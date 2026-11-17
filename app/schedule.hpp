@@ -25,4 +25,4 @@ public:
     std::string name() const override { return "uniform"; }
 };
 
-}  // namespace churn
+}

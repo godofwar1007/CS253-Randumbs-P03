@@ -8,7 +8,6 @@ HibbardBst::HibbardBst(HibbardPolicy policy, Rng& rng)
     : policy_(policy), rng_(rng) {}
 
 HibbardBst::~HibbardBst() {
-    // Iterative cleanup also works for a highly skewed tree.
     std::vector<Node*> pending;
     if (root_) pending.push_back(root_);
     while (!pending.empty()) {
@@ -86,8 +85,7 @@ bool HibbardBst::erase(Key k) {
         const std::uint64_t successorDepth = depth + 1 + successorAncestors.size();
         const std::uint64_t childSize = child ? child->subtreeSize : 0;
 
-        // Removing the replacement subtracts its old depth. Its one possible
-        // child moves up one level, subtracting one more per node in that subtree.
+        // Subtract the removed depth and one level for each promoted node.
         totalDepth_ -= successorDepth + childSize;
         x->key = s->key;
         *successorLink = child;
@@ -183,4 +181,4 @@ std::string HibbardBst::name() const {
     return policy_ == HibbardPolicy::Successor ? "hibbard_succ" : "hibbard_rand";
 }
 
-}  // namespace churn
+}

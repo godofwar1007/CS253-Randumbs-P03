@@ -9,7 +9,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Sanitizer build (g++ or clang++ on Linux or WSL): cmake -DCHURN_SANITIZE=ON
 option(CHURN_SANITIZE "Build with sanitizers" OFF)
 
 add_library(churn_common INTERFACE)

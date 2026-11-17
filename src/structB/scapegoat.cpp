@@ -7,8 +7,7 @@
 namespace churn {
 namespace {
 
-// ceil((3/2)^d) for depths 0 through 55. The final threshold exceeds the
-// number of distinct 32-bit keys. Keep the powers exact at integer boundaries.
+// Exact ceil((3/2)^d) thresholds through the 32-bit key range.
 constexpr auto makeDepthThresholds() {
     std::array<std::uint64_t, 56> thresholds{};
     std::uint64_t whole = 1;
@@ -31,8 +30,7 @@ bool tooHeavy(std::uint64_t child, std::uint64_t parent) noexcept {
     return 3 * child > 2 * parent;
 }
 
-// Stout–Warren's perfectLeaves places hole i at floor(i * slots / holes).
-// The array rebuild uses the same bottom-level layout to select its roots.
+// Both rebuilds use the Stout–Warren bottom-level layout.
 struct PerfectShape {
     explicit PerfectShape(std::uint64_t count) noexcept {
         while (2 * slots <= count + 1) slots *= 2;
@@ -57,7 +55,7 @@ struct PerfectShape {
     std::uint64_t holes = 0;
 };
 
-}  // namespace
+}
 
 ScapegoatTree::ScapegoatTree(RebuildMode mode) noexcept : mode_(mode) {}
 
@@ -78,7 +76,7 @@ bool ScapegoatTree::insert(Key key) {
     Node** scapegoat = nullptr;
     std::vector<Node*> scratch;
     if (depth > depthLimit(newSize)) {
-        // Use the subtree sizes as they will be after attaching the new leaf.
+        // Check projected sizes after inserting the leaf.
         std::size_t childSize = 1;
         for (auto it = ancestors.rbegin(); it != ancestors.rend(); ++it) {
             const auto parentSize = (**it)->size + 1;
@@ -231,8 +229,7 @@ void ScapegoatTree::rebuild(Node*& root, std::vector<Node*>& scratch) noexcept {
         collectNodes(root, scratch, 0, oldDepth);
         totalDepth_ -= oldDepth;
 
-        // Choose the median determined by the canonical leaf layout. For an
-        // even-sized subtree either of its two central keys is a valid median.
+        // Choose the median that matches the in-place layout.
         const auto build = [&](const auto& self, std::size_t first, std::size_t size,
                                std::uint64_t offset, std::uint64_t width,
                                std::uint64_t depth) -> Node* {
@@ -259,14 +256,14 @@ void ScapegoatTree::rebuild(Node*& root, std::vector<Node*>& scratch) noexcept {
 void ScapegoatTree::rebuildInPlace(Node*& root) noexcept {
     const PerfectShape shape(nodeSize(root));
 
-    // Tree to vine: rotate away each left child, then advance along the spine.
+    // Rotate away left links to form a vine.
     Node** link = &root;
     while (*link) {
         if ((*link)->left) rotateRight(*link);
         else link = &(*link)->right;
     }
 
-    // Scatter the deepest leaves evenly. The last conceptual slot is a hole.
+    // Spread bottom leaves evenly, leaving the final slot empty.
     std::uint64_t holeIndex = 1;
     link = &root;
     for (std::uint64_t slot = 1; slot < shape.slots; ++slot) {
@@ -275,7 +272,7 @@ void ScapegoatTree::rebuildInPlace(Node*& root) noexcept {
         link = &(*link)->right;
     }
 
-    // Compress the remaining spine, whose length is a power of two minus one.
+    // Compress the spine of length 2^k - 1.
     for (auto spine = shape.slots - 1; spine > 1; spine /= 2) {
         link = &root;
         for (std::uint64_t i = 0; i < spine / 2; ++i) {
@@ -288,8 +285,7 @@ void ScapegoatTree::rebuildInPlace(Node*& root) noexcept {
 void ScapegoatTree::rotateLeft(Node*& root) noexcept {
     Node* down = root;
     Node* up = down->right;
-    // The outside left subtree goes one level deeper and the outside right
-    // subtree rises one level. The two pivot nodes' depth changes cancel.
+    // The outside subtrees shift by one level in opposite directions.
     totalDepth_ += nodeSize(down->left);
     totalDepth_ -= nodeSize(up->right);
     up->size = down->size;
@@ -311,4 +307,4 @@ void ScapegoatTree::rotateRight(Node*& root) noexcept {
     root = up;
 }
 
-}  // namespace churn
+}
