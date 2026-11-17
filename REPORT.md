@@ -1,5 +1,29 @@
 # Project 3 — Search Trees Under Long-Running Churn
 
+## Problem and application
+
+The project studies whether a search tree gets deeper under repeated updates even when the number of stored keys stays fixed. We compare two Hibbard deletion policies, always choosing the successor and randomly choosing the predecessor or successor, against a scapegoat tree with array-based and in-place rebuilding. The simulator records mean node depth and rebuild counts over time. Under uniform churn, it runs at sizes 1,000, 2,000, and 4,000 for at least 1 million, 4 million, and 16 million delete–insert pairs respectively.
+
+## Shared interface and invariants
+
+The simulator and differential runner use the `churn::Dictionary` interface in `include/dictionary.hpp`. The factory selects the concrete implementation from the strategy name. Keys are integers and each dictionary holds at most one copy of a key. `insert` returns true only when a key is added, and `erase` returns true only when a key is removed. The corresponding unsuccessful updates preserve the state. `contains` checks membership and `size` returns the current number of keys. The `inorder` method appends the stored keys in ascending order so the test harness can compare the contents with the sorted-array oracle.
+
+For a tree, the root has depth zero and a child's depth is one greater than its parent's. The internal path length is the sum of all node depths. The simulator divides this sum by the number of live keys to compute average depth. A successful search for a uniformly chosen stored key visits one more node on average, because the root counts as a visit. The tree implementations maintain the depth sum as they update. The sorted-array oracle returns zero for the depth sum because it has no tree shape. The rebuild counter is cumulative. Each subtree or whole-tree rebuild counts once, and the Hibbard trees return zero.
+
+Both tree validators check strict BST ordering and stored subtree sizes. The Hibbard validator also compares the recomputed node count and depth sum with the cached values. The scapegoat validator checks the depth sum, the relation between current size and its recorded high-water size, and the height bound based on that high-water size. The differential harness checks return values and state against its oracle, and the simulator checks final size and calls the selected dictionary's validator before reporting success.
+
+## Simulator design
+
+The application in `app/simulator.cpp` takes a strategy, initial size and seed. The schedule defaults to uniform, and options can override the pair count, sampling interval and output destination. Numeric options must parse completely as unsigned integers. Invalid syntax or range errors are reported before simulation.
+
+The simulator draws distinct initial keys from the integer range [0, 2³⁰) and inserts them in draw order. Its live-key vector supports indexed victim selection and removal by moving the last element into the victim's slot. A hash set tracks membership for duplicate rejection during workload generation. A schedule selects a victim and proposes a replacement. After removing the victim from the live set, the simulator retries insertion candidates until one is absent from that set. It then applies the selected erase and insert to the dictionary. The dictionary has n keys before and after each pair and n−1 between the two updates.
+
+The RNG for initial keys and workload choices is seeded directly from the run seed. A second engine is deterministically derived from that seed for randomized Hibbard replacement. This separation matters because choosing a predecessor or successor consumes randomness inside the tree. With separate engines and independent live-key tracking, the same simulator build and workload parameters replay the same key operations across strategies. An unexpected failure to apply an already selected update stops the run so it cannot silently alter the operation stream.
+
+Each CSV row records the strategy, initial size, seed, completed pair count, mean depth and cumulative rebuild count. The simulator samples the initial state, then every n pairs by default, and includes a final sample if the last pair falls between sampling points. Initial construction and final validation are outside the measured interval. The elapsed time covers workload generation, dictionary updates and sampled output.
+
+The [D3 derivation](docs/derivations/D3_250001028.pdf) gives a conceptual comparison. A nonempty B-tree of minimum degree t with n keys has height at most log base t of ((n+1)/2). Its minimum occupancy and equal leaf depths keep the bound valid after each update. The simulator measures binary search trees, with the B-tree bound serving as a reference point in the discussion.
+
 ## D6 experiment setup
 
 The Release C++17 simulator ran all workloads on the same Windows 11 x64
