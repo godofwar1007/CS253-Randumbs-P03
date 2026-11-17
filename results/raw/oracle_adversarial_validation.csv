@@ -1,0 +1,14 @@
+test,tree,workload,seed,initial_size,operations,churn_pairs,result
+differential_adversarial,hibbard_succ,adversarial,20260928,128,1000000,499936,PASS
+differential_adversarial,hibbard_rand,adversarial,20260928,128,1000000,499936,PASS
+differential_adversarial,scapegoat_array,adversarial,20260928,128,1000000,499936,PASS
+differential_adversarial,scapegoat_inplace,adversarial,20260928,128,1000000,499936,PASS
+adversarial_export,hibbard_succ,adversarial,42,16,1024,504,PASS
+adversarial_export,hibbard_rand,adversarial,42,16,1024,504,PASS
+adversarial_export,scapegoat_array,adversarial,42,16,1024,504,PASS
+adversarial_export,scapegoat_inplace,adversarial,42,16,1024,504,PASS
+adversarial_replay,hibbard_succ,adversarial,42,16,1024,504,PASS
+adversarial_replay,hibbard_rand,adversarial,42,16,1024,504,PASS
+adversarial_replay,scapegoat_array,adversarial,42,16,1024,504,PASS
+adversarial_replay,scapegoat_inplace,adversarial,42,16,1024,504,PASS
+adversarial_generator,,adversarial,42;43,16,1024,504,PASS

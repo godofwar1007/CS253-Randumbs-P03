@@ -75,3 +75,13 @@ reference and deliberately broken code; `oracle_checks` tests deletion cases,
 rebuilds and checker detection of corrupted metadata.
 See [oracle/README.md](oracle/README.md) for commands, expected output, tree
 integration and failure replay.
+
+The teammate's adversarial schedule can also be checked against all four trees:
+
+```sh
+./build/differential --tree all --workload adversarial --size 128 --operations 1000000 --seed 20260928
+```
+
+The operation count includes initial insertions followed by complete
+delete/insert pairs. Use `--save build/adversarial.txt` to export the identical
+input used for every tree, then `--replay build/adversarial.txt` to rerun it.

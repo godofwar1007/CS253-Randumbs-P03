@@ -1,0 +1,188 @@
+Start testing: Nov 17 00:05 UTC
+----------------------------------------------------------
+8/9 Testing: adversarial_export
+8/9 Test: adversarial_export
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/differential" "--tree" "all" "--workload" "adversarial" "--size" "16" "--operations" "1024" "--seed" "42" "--save" "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/adversarial_replay.txt"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"adversarial_export" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+Testing hibbard_succ, seed=42, operations=1024, workload=adversarial
+PASS hibbard_succ
+Testing hibbard_rand, seed=42, operations=1024, workload=adversarial
+PASS hibbard_rand
+Testing scapegoat_array, seed=42, operations=1024, workload=adversarial
+PASS scapegoat_array
+Testing scapegoat_inplace, seed=42, operations=1024, workload=adversarial
+PASS scapegoat_inplace
+ALL SELECTED TREES PASSED
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"adversarial_export" end time: Nov 17 00:05 UTC
+"adversarial_export" time elapsed: 00:00:00
+----------------------------------------------------------
+
+1/9 Testing: harness_test
+1/9 Test: harness_test
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/harness_test"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"harness_test" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+HARNESS TEST PASSED: 1000000 operations, seed=20260928; fault detection and shrinking passed
+Real project trees are checked separately by differential.
+<end of output>
+Test time =   9.42 sec
+----------------------------------------------------------
+Test Passed.
+"harness_test" end time: Nov 17 00:05 UTC
+"harness_test" time elapsed: 00:00:09
+----------------------------------------------------------
+
+3/9 Testing: scapegoat_tests
+3/9 Test: scapegoat_tests
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/scapegoat_tests"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"scapegoat_tests" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+Scapegoat tests passed
+<end of output>
+Test time =   1.59 sec
+----------------------------------------------------------
+Test Passed.
+"scapegoat_tests" end time: Nov 17 00:05 UTC
+"scapegoat_tests" time elapsed: 00:00:01
+----------------------------------------------------------
+
+4/9 Testing: oracle_checks
+4/9 Test: oracle_checks
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/oracle_checks"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"oracle_checks" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+ORACLE CHECKS PASSED: deletion cases, rebuilds and corrupted metadata
+<end of output>
+Test time =   0.35 sec
+----------------------------------------------------------
+Test Passed.
+"oracle_checks" end time: Nov 17 00:05 UTC
+"oracle_checks" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/9 Testing: differential_replay
+5/9 Test: differential_replay
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/differential" "--replay" "/mnt/c/Users/Tanush Bansal/trial/DSA-project/tests/oracle_cases/deletions.txt"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"differential_replay" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+Testing hibbard_succ, seed=42, operations=23, workload=mixed
+PASS hibbard_succ
+Testing hibbard_rand, seed=42, operations=23, workload=mixed
+PASS hibbard_rand
+Testing scapegoat_array, seed=42, operations=23, workload=mixed
+PASS scapegoat_array
+Testing scapegoat_inplace, seed=42, operations=23, workload=mixed
+PASS scapegoat_inplace
+ALL SELECTED TREES PASSED
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"differential_replay" end time: Nov 17 00:05 UTC
+"differential_replay" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/9 Testing: adversarial_generator
+6/9 Test: adversarial_generator
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/adversarial_test"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"adversarial_generator" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+ADVERSARIAL GENERATOR TEST PASSED
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"adversarial_generator" end time: Nov 17 00:05 UTC
+"adversarial_generator" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/9 Testing: differential_all
+2/9 Test: differential_all
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/differential" "--tree" "all" "--operations" "1000000" "--seed" "20260928"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"differential_all" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+Testing hibbard_succ, seed=20260928, operations=1000000, workload=mixed
+PASS hibbard_succ
+Testing hibbard_rand, seed=20260928, operations=1000000, workload=mixed
+PASS hibbard_rand
+Testing scapegoat_array, seed=20260928, operations=1000000, workload=mixed
+PASS scapegoat_array
+Testing scapegoat_inplace, seed=20260928, operations=1000000, workload=mixed
+PASS scapegoat_inplace
+ALL SELECTED TREES PASSED
+<end of output>
+Test time = 113.75 sec
+----------------------------------------------------------
+Test Passed.
+"differential_all" end time: Nov 17 00:07 UTC
+"differential_all" time elapsed: 00:01:53
+----------------------------------------------------------
+
+9/9 Testing: adversarial_replay
+9/9 Test: adversarial_replay
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/differential" "--replay" "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/adversarial_replay.txt"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"adversarial_replay" start time: Nov 17 00:07 UTC
+Output:
+----------------------------------------------------------
+Testing hibbard_succ, seed=42, operations=1024, workload=adversarial
+PASS hibbard_succ
+Testing hibbard_rand, seed=42, operations=1024, workload=adversarial
+PASS hibbard_rand
+Testing scapegoat_array, seed=42, operations=1024, workload=adversarial
+PASS scapegoat_array
+Testing scapegoat_inplace, seed=42, operations=1024, workload=adversarial
+PASS scapegoat_inplace
+ALL SELECTED TREES PASSED
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"adversarial_replay" end time: Nov 17 00:07 UTC
+"adversarial_replay" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/9 Testing: differential_adversarial
+7/9 Test: differential_adversarial
+Command: "/mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize/differential" "--tree" "all" "--workload" "adversarial" "--size" "128" "--operations" "1000000" "--seed" "20260928"
+Directory: /mnt/c/Users/Tanush Bansal/trial/DSA-project/build-oracle-sanitize
+"differential_adversarial" start time: Nov 17 00:05 UTC
+Output:
+----------------------------------------------------------
+Testing hibbard_succ, seed=20260928, operations=1000000, workload=adversarial
+PASS hibbard_succ
+Testing hibbard_rand, seed=20260928, operations=1000000, workload=adversarial
+PASS hibbard_rand
+Testing scapegoat_array, seed=20260928, operations=1000000, workload=adversarial
+PASS scapegoat_array
+Testing scapegoat_inplace, seed=20260928, operations=1000000, workload=adversarial
+PASS scapegoat_inplace
+ALL SELECTED TREES PASSED
+<end of output>
+Test time = 120.96 sec
+----------------------------------------------------------
+Test Passed.
+"differential_adversarial" end time: Nov 17 00:07 UTC
+"differential_adversarial" time elapsed: 00:02:00
+----------------------------------------------------------
+
+End testing: Nov 17 00:07 UTC
