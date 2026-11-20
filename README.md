@@ -45,6 +45,8 @@ Use `hibbard_succ`, `hibbard_rand`, `scapegoat_array`, or `scapegoat_inplace` fo
 
 ## Tests and replay
 
+Oracle work provides the sorted-array reference, a seeded differential harness connected to all four tree strategies, failure replay and shrinking, and regression tests for the invariant checkers. The harness compares operation results and dictionary state after every operation, with one million operations per strategy in the mixed and adversarial test configurations.My [Oracle README](oracle/README.md) explains the files, testing procedure, Windows commands, recorded results and current limitations.
+
 ```sh
 ctest --test-dir build -C Release --output-on-failure
 ./build/differential --tree all --operations 1000000 --seed 20260928

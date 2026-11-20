@@ -2,10 +2,11 @@
 
 ## AI assistance
 
-| Tool and date | Used by | Used for | Files affected | Changes and verification |
+| Tool and date | Used by | Used for | Files affected | Drafts, changes and verification |
 |---|---|---|---|---|
-| OpenAI Codex, 2026-11-14 | Tanush Bansal | Sorted-array oracle | oracle/sorted_array.hpp | Generated against the shared interface; edge cases and 100,000 seeded operations checked against a test-only std::set |
-| OpenAI Codex, 2026-11-17 | Tanush Bansal | Differential runner, seeded workloads, replay, shrinking, tests and documentation | oracle/harness.hpp, oracle/differential.cpp, oracle/trees.hpp, tests/harness_test.cpp, oracle/README.md, CMakeLists.txt, README.md, TOOLS.md | Used plain structs and functions without code comments; compiled and checked one million operations against a test-only reference, reproducibility, injected faults and shrinking; real-tree testing still awaits integration |
+| OpenAI Codex, 2026-11-14 | Tanush Bansal | First draft and checks for the sorted-array oracle | oracle/sorted_array.hpp | Generated a basic first draft of SortedArrayOracle using the shared Dictionary interface. Later edits simplified namespace use and data types. Edge cases and 100,000 seeded operations were checked against a test-only std::set. |
+| OpenAI Codex, 2026-11-17 | Tanush Bansal | First drafts and revisions for differential testing | oracle/harness.hpp, oracle/differential.cpp, oracle/trees.hpp, tests/harness_test.cpp, oracle/README.md, CMakeLists.txt, README.md, TOOLS.md | Generated first drafts of the harness and runner, including makeOperations, runTest, shrinkFailure and replay-file helpers. Assisted with connecting all four trees, test cases and build instructions. Later edits simplified namespace use and data types; checks covered one million operations against a test-only reference, seed reproduction, injected faults and shrinking. |
+| OpenAI Codex, 2026-11-20 | Tanush Bansal | Documentation draft and wording updates | README.md, oracle/README.md, TOOLS.md | Drafted the Oracle README and a brief contribution paragraph for the root README. Updated the outdated integration wording and checked the documented files, functions, commands and test names against the code. Recorded the existing verification results and build limitations. |
 
 ### Representative prompts
 
