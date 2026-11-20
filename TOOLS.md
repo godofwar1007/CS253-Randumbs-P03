@@ -72,3 +72,10 @@ use C++17. Bash orchestrates compilation, tests and experiments.
   inputs, and exercised the CMake/CTest workflow. Zig with Clang ran the
   measured Release experiments. The presentation authoring runtime was
   used for the slide and its preview.
+
+## Tree Churn Lab tooling
+
+OpenAI Codex assisted with the browser tree implementations, demo traces,
+interface, benchmark presentation, and Vercel deployment. Verification exercised
+both rebuild walkthroughs in offline Chrome and compared all twelve final-depth
+mean and sample-standard-deviation values with the recorded C++ CSV endpoints.

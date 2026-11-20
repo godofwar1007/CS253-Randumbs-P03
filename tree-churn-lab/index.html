@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f3ea">
+  <meta name="description" content="Explore binary search tree deletion and scapegoat rebuilding, then compare the C++ churn benchmarks.">
+  <title>Tree Churn Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="engine.js"></script>
+  <script defer src="data.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="site-head">
+    <div class="shell mast">
+      <a class="brand" href="#top" aria-label="Tree Churn Lab home"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Tree Churn Lab</span></a>
+      <nav aria-label="Primary">
+        <a href="#simulator">Simulator</a><a href="#benchmarks">Benchmarks</a><a href="#implementation">Implementation</a>
+      </nav>
+      <span class="course mono">CS 253 / MA 253</span>
+    </div>
+  </header>
+  <main id="top" class="shell">
+    <section class="hero" aria-labelledby="title">
+      <div class="hero-copy">
+        <span class="label">Project 03 <span aria-hidden="true">/</span> Data structures</span>
+        <h1 id="title">Search trees<br> <em>under churn.</em></h1>
+        <p>Watch search trees change as keys come and go. Compare deletion policies, see how a scapegoat rebuild works, and explore the results after millions of updates.</p>
+        <a href="#simulator" class="button lime">Open simulator <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-visual">
+        <canvas id="cover-tree" width="520" height="318" aria-label="An illustration of a binary search tree with a highlighted path"></canvas>
+        <span class="visual-caption mono"><span class="spot"></span> ROOT → INSERTION PATH</span>
+      </div>
+    </section>
+
+    <section id="simulator" class="section" aria-labelledby="sim-heading">
+      <div class="section-head"><div><span class="label">Interactive lab</span><h2 id="sim-heading">Churn simulator</h2></div><span class="status mono" id="live-status"><i></i> READY</span></div>
+      <div class="demo-switch" aria-label="Simulator mode">
+        <label for="demo-select">Presentation demo
+          <select id="demo-select">
+            <optgroup label="Structure A">
+              <option value="hibbard_succ">Hibbard · successor deletion</option>
+              <option value="hibbard_rand">Hibbard · randomized replacement</option>
+            </optgroup>
+            <optgroup label="Structure B">
+              <option value="scapegoat_insert">Find a scapegoat · insert 2</option>
+              <option value="scapegoat_array">Array rebuild · six-node subtree</option>
+              <option value="scapegoat_inplace">Stout–Warren · six-node subtree</option>
+              <option value="scapegoat_shrink">Deletion · whole-tree rebuild</option>
+            </optgroup>
+          </select>
+        </label>
+        <button class="lime" type="button" id="load-demo">Load demo</button>
+        <button type="button" id="free-lab">Free lab</button>
+      </div>
+      <div class="workbench">
+        <div class="card tree-card">
+          <div class="card-heading"><div><h3 id="tree-name">Hibbard · successor</h3><p id="tree-description"></p></div><span id="oracle-status" class="oracle mono" aria-live="polite">✓ ORACLE MATCH</span></div>
+          <div class="tree-board"><canvas id="tree" width="780" height="315" aria-label="Current search tree. The nodes are also listed in sorted order below."></canvas><span class="board-hint mono">CLICK A NODE TO INSPECT</span></div>
+          <div id="inspection" class="inspection mono" aria-live="polite"></div>
+          <div class="metrics">
+            <div><span>LIVE KEYS</span><strong id="keys">15</strong></div>
+            <div><span>AVG. DEPTH</span><strong id="depth">0.00</strong></div>
+            <div><span>HEIGHT</span><strong id="height">0</strong></div>
+            <div><span>REBUILDS</span><strong id="rebuilds">0</strong></div>
+          </div>
+        </div>
+        <div class="card options" id="demo-controls">
+          <div class="card-heading"><div><h3>Demo walkthrough</h3><p id="demo-count" class="mono"></p></div></div>
+          <div class="demo-body">
+            <div aria-live="polite" aria-atomic="true">
+              <h3 id="demo-stage"></h3>
+              <p id="demo-detail"></p>
+            </div>
+            <div id="demo-array" class="demo-array mono" aria-label="Sorted node pointers" hidden></div>
+            <div class="demo-actions">
+              <button type="button" id="demo-back">Back</button>
+              <button type="button" id="demo-next" class="lime">Next step</button>
+              <button type="button" id="demo-play">Autoplay</button>
+              <button type="button" id="demo-restart">Restart</button>
+            </div>
+          </div>
+        </div>
+        <div class="card options" id="free-controls" hidden>
+          <div class="card-heading"><div><h3>Run controls</h3><p>Each pair deletes one key and inserts one key.</p></div></div>
+          <div class="controls">
+            <label>Tree strategy<select id="strategy"><option value="hibbard_succ">Hibbard · successor</option><option value="hibbard_rand">Hibbard · random replacement</option><option value="scapegoat_array">Scapegoat · array rebuild</option><option value="scapegoat_inplace">Scapegoat · in-place rebuild</option></select></label>
+            <label>Workload<select id="workload"><option value="uniform">Uniform churn</option><option value="min_delete_high_insert">Delete minimum, insert high</option><option value="max_delete_low_insert">Delete maximum, insert low</option><option value="scapegoat_stress">Scapegoat stress</option></select></label>
+            <div class="field-row"><label>Starting keys<select id="size"><option>7</option><option selected>15</option><option>23</option><option>31</option></select></label><label>Seed<input id="seed" type="number" value="42" min="0" max="4294967295" step="1"></label></div>
+            <div class="play-row"><button type="button" id="play" class="lime">▶ Play</button><button type="button" id="step">Step +1</button><button type="button" id="reset" aria-label="Reset simulation" title="Reset simulation">↻</button></div>
+            <label class="speed-row">Speed<input id="speed" type="range" min="1" max="10" value="3"><output id="speed-value" for="speed">3/s</output></label>
+            <form id="manual"><label for="key-input">Try a key</label><div class="manual-buttons"><input id="key-input" type="number" aria-label="Key" placeholder="e.g. 42" min="-2147483648" max="2147483647" step="1" required><button name="action" value="insert" type="submit">Insert</button><button name="action" value="erase" type="submit">Delete</button><button name="action" value="find" type="submit">Find</button></div></form>
+          </div>
+        </div>
+      </div>
+      <div class="card trace">
+        <div class="card-heading"><div><h3>Operation log</h3><p id="pair-count" class="mono"></p></div><button type="button" id="toggle-keys" aria-expanded="false" aria-controls="sorted-keys">View sorted keys</button></div>
+        <div id="sorted-keys" class="sorted mono" hidden></div>
+        <ol id="log" aria-live="polite"></ol>
+      </div>
+    </section>
+
+    <section id="benchmarks" class="section" aria-labelledby="bench-heading">
+      <div class="section-head"><div><span class="label">C++ benchmark results</span><h2 id="bench-heading">What the runs showed</h2></div><a class="text-link mono" href="https://github.com/godofwar1007/DSA-project/blob/main/REPORT.md" target="_blank" rel="noopener">Read report ↗</a></div>
+      <div class="card benchmark">
+        <div class="bench-controls"><label>Workload<select id="bench-workload"><option value="uniform">Uniform churn</option><option value="min_delete_high_insert">Delete minimum, insert high</option><option value="max_delete_low_insert">Delete maximum, insert low</option><option value="scapegoat_stress">Scapegoat stress</option></select></label><label>Tree size<select id="bench-size"><option value="1000">1,000 keys</option><option value="2000">2,000 keys</option><option value="4000" selected>4,000 keys</option></select></label><label>Measure<select id="bench-metric"><option value="0">Average depth (edges)</option><option value="1">Cumulative rebuilds</option></select></label></div>
+        <div class="plot-wrap"><canvas id="plot" width="1050" height="325" aria-label="Line chart of C++ benchmark results. Final means are listed just below the chart."></canvas><div id="plot-hover" class="mono plot-hover" hidden></div></div>
+        <div id="plot-label" class="plot-label mono"></div>
+        <div id="legend" class="legend"></div>
+        <p id="bench-note" class="bench-note"></p>
+        <details class="benchmark-summary" open>
+          <summary>Uniform churn depth at the end of the run</summary>
+          <p>Mean depth in edges after n² pairs, with sample standard deviation across five seeds.</p>
+          <div class="benchmark-table">
+            <table aria-label="Final uniform-churn depth">
+              <thead><tr><th scope="col">Keys</th><th scope="col">Scapegoat in-place</th><th scope="col">Successor</th><th scope="col">Random replacement</th><th scope="col">Scapegoat array</th></tr></thead>
+              <tbody id="uniform-final-body"></tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="implementation" class="section" aria-labelledby="impl-heading">
+      <div class="section-head"><div><span class="label">C++17 walkthrough</span><h2 id="impl-heading">Inside the trees</h2></div><a class="text-link mono" href="https://github.com/godofwar1007/DSA-project" target="_blank" rel="noopener">Project repo ↗</a></div>
+      <div id="code-tabs" class="tabs" aria-label="Implementation topics"></div>
+      <div class="implementation-grid">
+        <article class="card explanation"><h3 id="code-heading"></h3><p id="code-intro"></p><ol id="code-steps"></ol><a id="code-link" href="#implementation" target="_blank" rel="noopener" class="button">Open full source ↗</a></article>
+        <div class="card code-card"><div class="code-head"><span id="code-file" class="mono"></span><button id="copy" class="mono" type="button">Copy excerpt</button></div><pre tabindex="0"><code id="code"></code></pre></div>
+      </div>
+      <details class="card notes"><summary>Derivations and experiment notes</summary><div class="note-body"><ul id="derivations"></ul><p>D3 discusses the B-tree height bound. D5 distinguishes ordinary fresh-key churn from the exact-fit model, which reinserts the deleted key. The measured curves are evidence at the tested sizes.</p></div></details>
+    </section>
+  </main>
+  <footer><div class="shell"><a href="#top">Tree Churn Lab ↑</a><span class="mono">Search Trees Under Long-Running Churn</span></div></footer>
+</body>
+</html>
