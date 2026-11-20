@@ -64,6 +64,10 @@ bash scripts/run_all.sh --figures-only
 
 Use `--full` for fresh measurements. The script requires unused benchmark output directories for a full run. See the [benchmark instructions](bench/README.md) for the existing raw data and pair budgets. At 4,000 keys after 16 million uniform pairs, the five-seed mean final depths were **23.93** edges for always-successor, **11.94** for randomized replacement, and **12.87** for both scapegoat modes. Hardware cache-counter measurements were unavailable. [Report](REPORT.md)
 
+## Live browser demo
+
+Our deployed [Tree Churn Lab](https://dist-wine-eta-56.vercel.app/) lets users explore both Hibbard deletion policies and both scapegoat rebuild methods through step-by-step walkthroughs, seeded churn, and manual insert, delete and search operations. It checks the live dictionary contents against a sorted-array oracle and displays the recorded C++ benchmark results for comparison. See the [demo source and local setup](tree-churn-lab/README.md) for details.
+
 ## Repository map
 
 | Path | Contents |
@@ -75,5 +79,6 @@ Use `--full` for fresh measurements. The script requires unused benchmark output
 | `bench/`, `scripts/` | Benchmark runner and experiment commands |
 | `results/` | Raw measurements, figures, and the figure generator |
 | `docs/` | Derivations, prediction model, and presentation materials |
+| `tree-churn-lab/` | Deployed browser demo, tree walkthroughs, and recorded benchmark charts |
 
 See [INTERFACE.md](INTERFACE.md) for invariants and [TOOLS.md](TOOLS.md) for tool use.
